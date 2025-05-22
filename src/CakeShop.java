@@ -1,9 +1,23 @@
 public class CakeShop {
-    private double profit;
+    private double totalProfit;
     private int level;
     private int avgRating;
+    private Day day;
 
     public CakeShop() {
+
+    }
+
+    public Cake startDay() { //starting a new day
+        day = new Day();
+        return day.start();
+    }
+
+    public Day getDay() {
+        return day;
+    }
+
+    public void spinWheel(){
 
     }
 }
