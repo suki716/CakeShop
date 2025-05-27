@@ -51,16 +51,20 @@ public class DisplayPanel extends JPanel implements ActionListener {
     private BufferedImage bgMaking;
     private BufferedImage bgCounter;
     private BufferedImage endScreen;
+    private BufferedImage counter;
+
+    //cookie img
+    private BufferedImage ordering;
 
     //gameplay
     private CakeShop cakeShop;
     private int currCake;
     private Cake userCake;
+    private Walking walk;
+    private Timer timer;
+    private int x = 10;
 
     public DisplayPanel(JFrame frame) {
-        //images
-        bgCounter = loadImage("bgCounter.jpg");
-
         //logic
         cakeShop = new CakeShop();
         order = "I want a cake!";
@@ -161,13 +165,19 @@ public class DisplayPanel extends JPanel implements ActionListener {
         leaves = new JButton("leaves");
         leaves.addActionListener(this);
         add(leaves);
+
+        //images
+        bgCounter = loadImage("bgCounter.png");
+        counter = loadImage("Counter.png");
+        walk = new Walking();
+        ordering = loadImage("Ordering.webp");
     }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         clear();
         //background
-        g.drawImage(bgCounter, 0, 0, this);
+        g.drawImage(bgCounter, 0, 0, null);
         //constant buttons
         exit.setVisible(true);
         exit.setLocation(10, 10);
@@ -176,13 +186,22 @@ public class DisplayPanel extends JPanel implements ActionListener {
             nextFrame.setLocation(675, 425);
         }
         if (currScreen.equals("order")) {
-            g.setFont(new Font("Helvetica ", Font.BOLD, 25));
-            g.setColor(Color.BLACK);
-            g.drawString(order, 300, 60);
-            next.setVisible(true);
-            next.setLocation(550, 45);
-            cancel.setVisible(true);
-            cancel.setLocation(550, 75);
+            //animation
+            walk.start();
+            if (walk.getX() <= 400) {
+                g.drawImage(walk.getActiveFrame(), walk.getX(), 200, walk.getActiveFrame().getWidth(), walk.getActiveFrame().getHeight(), null);
+            } else {
+                walk.stop();
+                g.drawImage(ordering, 400, 200, null);
+                g.setFont(new Font("Helvetica ", Font.BOLD, 25));
+                g.setColor(Color.BLACK);
+                g.drawString(order, 300, 60);
+                next.setVisible(true);
+                next.setLocation(550, 45);
+                cancel.setVisible(true);
+                cancel.setLocation(550, 75);
+            }
+            //g.drawImage(counter, 0, 0, null);
         } else if (currScreen.equals("batter")) {
             //choose flavor
             vanilla.setVisible(true);
@@ -307,10 +326,10 @@ public class DisplayPanel extends JPanel implements ActionListener {
 
     private BufferedImage loadImage(String path) {
         try {
-            return ImageIO.read(new File(path));
+            return ImageIO.read(new File("src\\" + path));
         } catch (IOException e) {
-            System.out.println("not loaded in");
-            return null;
+            System.out.println(e.getMessage());
         }
+        return null;
     }
 }
