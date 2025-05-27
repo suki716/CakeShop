@@ -1,18 +1,27 @@
 import java.util.ArrayList;
 
 public class Day {
-    private double profit;
+    private int profit;
     private int stars;
+    private int customerNum;
     //private int expenses;
     private Cake customer;
 
     public Day() {
-
+        stars = 0;
+        profit = 0;
+        customerNum = 1;
     }
 
-    public Cake start() {
-        initializeCake();
-        return customer;
+    public Cake newCustomer() {
+        if (customerNum < 5){
+            initializeCake();
+            customerNum++;
+            stars = 0;
+            profit = 0;
+            return customer;
+        }
+        return null;
     }
 
     public void initializeCake() {
@@ -23,5 +32,13 @@ public class Day {
         stars += customer.calculateRating();
         profit += customer.calculateProfit();
         return stars;
+    }
+
+    public int getStars(){
+        return stars;
+    }
+
+    public int getProfit(){
+        return profit;
     }
 }

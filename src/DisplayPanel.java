@@ -51,8 +51,8 @@ public class DisplayPanel extends JPanel implements ActionListener {
 
     //gameplay
     private CakeShop cakeShop;
-    private int currCake;
-    private Cake userCake;
+    private Day currDay;
+    private Cake currCake;
 
     public DisplayPanel(JFrame frame) {
         //images
@@ -147,10 +147,6 @@ public class DisplayPanel extends JPanel implements ActionListener {
         chocolateBar.addActionListener(this);
         add(chocolateBar);
 
-        apple = new JButton("apple");
-        apple.addActionListener(this);
-        add(apple);
-
         cinnamonStick = new JButton("cinnamonStick");
         cinnamonStick.addActionListener(this);
         add(cinnamonStick);
@@ -220,8 +216,6 @@ public class DisplayPanel extends JPanel implements ActionListener {
             strawberries.setLocation(200, 100);
             chocolateBar.setVisible(true);
             chocolateBar.setLocation(50, 150);
-            apple.setVisible(true);
-            apple.setLocation(200, 150);
             cinnamonStick.setVisible(true);
             cinnamonStick.setLocation(500, 100);
             leaves.setVisible(true);
@@ -297,7 +291,6 @@ public class DisplayPanel extends JPanel implements ActionListener {
         candles.setVisible(false);
         strawberries.setVisible(false);
         chocolateBar.setVisible(false);
-        apple.setVisible(false);
         cinnamonStick.setVisible(false);
         leaves.setVisible(false);
     }
