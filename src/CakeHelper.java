@@ -1,20 +1,25 @@
 import java.util.ArrayList;
 
 class CakeHelper {
-    public static ArrayList<Ingredient> flavors;
+    //original
+    public static ArrayList<Ingredient> batters;
     public static ArrayList<Ingredient> frosting;
     public static ArrayList<Ingredient> toppings;
-    public static ArrayList<Ingredient> decoration;
+
+    //additional
+    private static ArrayList<Ingredient> newBatters;
+    private static ArrayList<Ingredient> newFrosting;
+    private static ArrayList<Ingredient> newToppings;
 
     public static void initializeLists() {
         //initial batter
-        flavors = new ArrayList<>();
+        batters = new ArrayList<>();
         Ingredient vanillaBatter = new Ingredient("vanilla", 1, false);
         Ingredient chocoBatter = new Ingredient("chocolate", 1, false);
         Ingredient stbBatter = new Ingredient("strawberry", 1, false);
-        flavors.add(vanillaBatter);
-        flavors.add(chocoBatter);
-        flavors.add(stbBatter);
+        batters.add(vanillaBatter);
+        batters.add(chocoBatter);
+        batters.add(stbBatter);
 
         //initial frosting Ingredient
         frosting = new ArrayList<>();
@@ -26,6 +31,7 @@ class CakeHelper {
         frosting.add(stbFrost);
 
         //initial toppings
+        toppings = new ArrayList<>();
         Ingredient candle = new Ingredient("candle", 1, false);
         Ingredient strawberries = new Ingredient("strawberry", 1, false);
         Ingredient chocolateBar = new Ingredient("chocolate", 1, false);
@@ -33,18 +39,63 @@ class CakeHelper {
         toppings.add(strawberries);
         toppings.add(chocolateBar);
 
-        //initial decorations
+        //additional batters
+        newBatters = new ArrayList<>();
+        Ingredient lemonBatter = new Ingredient("lemon",1, true);
+        Ingredient matchaBatter = new Ingredient("matcha",1, true);
+        newBatters.add(lemonBatter);
+        newBatters.add(matchaBatter);
+
+        //additional frostings
+        newFrosting = new ArrayList<>();
+        Ingredient peppermintFrost = new Ingredient("peppermint",1, true);
+        Ingredient peachFrost = new Ingredient("peach", 1, false);
+        newFrosting.add(peppermintFrost);
+        newFrosting.add(peachFrost);
+
+        //additional toppings
+        newToppings = new ArrayList<>();
+        Ingredient cinnamon = new Ingredient("cinnamonStick", 1, true);
+        Ingredient leaf = new Ingredient("leaf",1, true);
+        newToppings.add(cinnamon);
+        newToppings.add(leaf);
     }
 
-    public static void addRandom(){
+    public static void addRandomIngredient(){
         int randomCategory = (int) (Math.random() * 3);
-        if (randomCategory == 0){
-            
-        } else if (randomCategory == 1){
-
-        } else if (randomCategory == 2){
-
+        boolean valid = false;
+        while (!valid) {
+            if (randomCategory == 0 && !isFull(batters)) {
+                int randomItem = (int) (Math.random() * newBatters.size());
+                batters.add(newBatters.remove(randomItem));
+                valid = true;
+            } else if (randomCategory == 1 && !isFull(frosting)) {
+                int randomItem = (int) (Math.random() * newFrosting.size());
+                frosting.add(newFrosting.remove(randomItem));
+                valid = true;
+            } else if (randomCategory == 2 && !isFull(toppings)) {
+                int randomItem = (int) (Math.random() * newToppings.size());
+                toppings.add(newToppings.remove(randomItem));
+                valid = true;
+            }
         }
+    }
+
+    public static Cake randomCake(){
+        int randomB = (int) (Math.random() * batters.size());
+        String randomBatter = batters.get(randomB).getName();
+        int randomF = (int) (Math.random() * frosting.size());
+        String randomFrosting = frosting.get(randomF).getName();
+        int randomT = (int) (Math.random() * toppings.size());
+        String randomTopping = toppings.get(randomT).getName();
+        int randomLayer = (int) (Math.random() * 4) + 1;
+        int randomFrostingNum = (int) (Math.random() * 8) + 1;
+        int randomToppingNum = (int) (Math.random() * 8) + 1;
+        return new Cake(randomBatter, randomLayer, randomFrosting, randomFrostingNum, randomTopping, randomToppingNum);
+    }
+
+    private static boolean isFull(ArrayList<Ingredient> list){
+        return list.size() == 5;
     }
 
 }

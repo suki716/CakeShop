@@ -37,14 +37,11 @@ public class DisplayPanel extends JPanel implements ActionListener {
     private JButton peppermintFrost; //locked
     private JButton peachFrost; //locked
     //toppings
-    private JButton candles; //maybe
+    private JButton candles;
     private JButton strawberries;
     private JButton chocolateBar;
-    private JButton apple; //locked
     private JButton cinnamonStick; //locked
     private JButton leaves; //locked
-    private JButton sprinkles;
-    private JButton birthday;
 
     //images
     private BufferedImage startingScreen;

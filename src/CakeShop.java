@@ -5,7 +5,7 @@ public class CakeShop {
     private Day day;
 
     public CakeShop() {
-
+        CakeHelper.initializeLists();
     }
 
     public Cake startDay() { //starting a new day
@@ -18,6 +18,6 @@ public class CakeShop {
     }
 
     public void spinWheel(){
-
+        CakeHelper.addRandomIngredient();
     }
 }

@@ -16,13 +16,7 @@ public class Day {
     }
 
     public void initializeCake() {
-        String batter = CakeHelper.flavors.get((int) (Math.random() * CakeHelper.flavors.size())).getName();
-        int layer = (int) (Math.random() * 4) + 1;
-        String frostingStr = CakeHelper.frosting.get((int) (Math.random() * CakeHelper.frosting.size())).getName();
-        int frostAmt = (int) (Math.random() * 8) + 1;
-        String toppingStr = CakeHelper.toppings.get((int) (Math.random() * CakeHelper.toppings.size())).getName();
-        int toppingAmt = (int) (Math.random() * 8) + 1;
-        customer = new Cake(batter, layer, frostingStr, frostAmt, toppingStr, toppingAmt);
+        customer = CakeHelper.randomCake();
     }
 
     public int cakeDone() {
