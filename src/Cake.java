@@ -26,7 +26,9 @@ public class Cake { //comparing correctness
     public Cake() {}
 
     public void addLayer() {
-        layer++;
+        if (layer < 4) {
+            layer++;
+        }
     }
 
     public void addFrosting(String flavor) {

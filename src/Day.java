@@ -1,33 +1,44 @@
 import java.util.ArrayList;
 
 public class Day {
-    private double profit;
+    private int profit;
     private int stars;
+    private int customerNum;
     //private int expenses;
     private Cake customer;
 
     public Day() {
-
+        stars = 0;
+        profit = 0;
+        customerNum = 1;
     }
 
-    public Cake start() {
-        initializeCake();
-        return customer;
+    public Cake newCustomer() {
+        if (customerNum < 5){
+            initializeCake();
+            customerNum++;
+            stars = 0;
+            profit = 0;
+            return customer;
+        }
+        return null;
     }
 
     public void initializeCake() {
-        String batter = CakeHelper.flavors.get((int) (Math.random() * CakeHelper.flavors.size())).getName();
-        int layer = (int) (Math.random() * 4) + 1;
-        String frostingStr = CakeHelper.frosting.get((int) (Math.random() * CakeHelper.frosting.size())).getName();
-        int frostAmt = (int) (Math.random() * 8) + 1;
-        String toppingStr = CakeHelper.toppings.get((int) (Math.random() * CakeHelper.toppings.size())).getName();
-        int toppingAmt = (int) (Math.random() * 8) + 1;
-        customer = new Cake(batter, layer, frostingStr, frostAmt, toppingStr, toppingAmt);
+        customer = CakeHelper.randomCake();
     }
 
     public int cakeDone() {
         stars += customer.calculateRating();
         profit += customer.calculateProfit();
         return stars;
+    }
+
+    public int getStars(){
+        return stars;
+    }
+
+    public int getProfit(){
+        return profit;
     }
 }
