@@ -11,7 +11,10 @@ public class DisplayPanel extends JPanel implements ActionListener {
     //dialogue options
     private JButton next;
     private JButton cancel;
-    private String order;
+    private String order1;
+    private String order2;
+    private String order3;
+    private String order4;
     private String currScreen;
     //play options
     private JButton start;
@@ -68,8 +71,13 @@ public class DisplayPanel extends JPanel implements ActionListener {
     public DisplayPanel(JFrame frame) {
         //logic
         cakeShop = new CakeShop();
-        order = "I want a cake!";
-        currScreen = "batter";
+        currDay = new Day();
+        currCake = currDay.newCustomer();
+        order1 = "Hello! I want a " + currCake.getCorrectLayer() + "-layered ";
+        order2 = currCake.getCorrectBat() + " cake with " + currCake.getCorrectFrostAmt();
+        order3 = currCake.getCorrectFrost() + " frosting dollops.";
+        order4 = "Oh, and please add " + currCake.getCorrectTopAmt() + " " + currCake.getCorrectTop() + "!";
+        currScreen = "start";
         //dialogue options
         next = new JButton("Next");
         next.addActionListener(this);
@@ -211,9 +219,13 @@ public class DisplayPanel extends JPanel implements ActionListener {
                 walk.stop();
                 g.drawImage(ordering, 300, 100, null);
                 g.drawImage(textBubble, 0, 0, null);
-                g.setFont(new Font("Helvetica ", Font.BOLD, 25));
+                g.setFont(new Font("Helvetica ", Font.BOLD, 20));
                 g.setColor(Color.BLACK);
-                g.drawString(order, 300, 50);
+                g.drawString(order1, 275, 75);
+                g.drawString(order2,275, 95);
+                g.drawString(order3, 275,115);
+                g.drawString(order4,275,135);
+                g.drawString("Thank You!", 275, 155);
                 next.setVisible(true);
                 next.setLocation(550, 45);
                 cancel.setVisible(true);

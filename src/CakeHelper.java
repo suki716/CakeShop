@@ -32,9 +32,9 @@ class CakeHelper {
 
         //initial toppings
         toppings = new ArrayList<>();
-        Ingredient candle = new Ingredient("candle", 1, false);
-        Ingredient strawberries = new Ingredient("strawberry", 1, false);
-        Ingredient chocolateBar = new Ingredient("chocolate", 1, false);
+        Ingredient candle = new Ingredient("candles", 1, false);
+        Ingredient strawberries = new Ingredient("strawberries", 1, false);
+        Ingredient chocolateBar = new Ingredient("chocolate bars", 1, false);
         toppings.add(candle);
         toppings.add(strawberries);
         toppings.add(chocolateBar);
@@ -90,7 +90,7 @@ class CakeHelper {
         String randomTopping = toppings.get(randomT).getName();
         int randomLayer = (int) (Math.random() * 3) + 1;
         int randomFrostingNum = (int) (Math.random() * 8) + 1;
-        int randomToppingNum = (int) (Math.random() * 8) + 1;
+        int randomToppingNum = (int) (Math.random() * 8) + 2;
         return new Cake(randomBatter, randomLayer, randomFrosting, randomFrostingNum, randomTopping, randomToppingNum);
     }
 
