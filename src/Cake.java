@@ -2,61 +2,104 @@ public class Cake { //comparing correctness
     private final int MAX_LAYERS = 4;
     private int rating = 0;
     //correct recipe
-    private String batter;
-    private String frosting;
-    private String topping;
+    private String correctBat;
     private int correctLayer;
-    private int correctFrost;
-    private int correctTopping;
+    private String correctFrost;
+    private int correctFrostAmt;
+    private String correctTop;
+    private int correctTopAmt;
     //what you made
+    private String batter;
     private int layer;
+    private String frosting;
     private int frostingAmt;
+    private String topping;
     private int toppingAmt;
 
     //initializing correct customer cake
     public Cake(String batter, int layer, String frosting, int frostAmt, String topping, int toppingAmt) {
-        this.batter = batter;
+        this.correctBat = batter;
         this.correctLayer = layer;
-        this.frosting = frosting;
-        this.frostingAmt = frostAmt;
-        this.topping = topping;
-        this.toppingAmt = toppingAmt;
+        this.correctFrost = frosting;
+        this.correctFrostAmt = frostAmt;
+        this.correctTop= topping;
+        this.correctTopAmt = toppingAmt;
     }
 
     public Cake() {}
 
+
+    //getters
+    public String getCorrectBat(){
+        return correctBat;
+    }
+
+    public int getCorrectLayer(){
+        return correctLayer;
+    }
+
+    public String getCorrectFrost(){
+        return correctFrost;
+    }
+
+    public int getCorrectFrostAmt() {
+        return correctFrostAmt;
+    }
+
+    public String getCorrectTop(){
+        return correctTop;
+    }
+
+    public int getCorrectTopAmt(){
+        return correctTopAmt;
+    }
+
     public void addLayer() {
-        if (layer < 4) {
+        if (layer < 3) {
             layer++;
         }
     }
 
-    public void addFrosting(String flavor) {
-        if (flavor.equals(frosting)) {
-            frostingAmt++;
-        }
+    public void chooseBatter(String flavor) {
+        batter = flavor;
     }
 
-    public void addTopping(String topping) {
-        if (this.topping.equals(topping)) {
-            toppingAmt++;
+    public void addFrosting(String flavor) {
+        if (frosting != null){
+            frosting = flavor;
         }
+        frostingAmt++;
+    }
+
+    public void addTopping(String top) {
+        if (topping != null){
+            topping = top;
+        }
+        toppingAmt++;
     }
 
     public int calculateRating() {
+        if (batter.equals(correctBat)){
+            rating++;
+        }
+
         if (layer == correctLayer) {
             rating++;
         }
-        if (frostingAmt > 0) {
+
+        if (frosting.equals(correctFrost)) {
             rating++;
         }
-        if (frostingAmt == correctFrost) {
+
+        if (frostingAmt == correctFrostAmt) {
             rating++;
         }
-        if (toppingAmt > 0) {
+
+        if (toppingAmt == correctTopAmt) {
             rating++;
         }
-        if (toppingAmt == correctTopping) {
+
+        if (toppingAmt == correctTopAmt) {
             rating++;
         }
         return rating;

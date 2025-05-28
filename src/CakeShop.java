@@ -43,7 +43,7 @@ public class CakeShop {
     }
 
     public double getAccuracy(){
-        return ((double) totalStars / (customerNum * 5)) * 100;
+        return ((double) totalStars / (customerNum * 6)) * 100;
     }
 
     public double avgRating(){
