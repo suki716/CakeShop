@@ -18,7 +18,7 @@ public class Walking implements ActionListener {
 
     public Walking() {
         try {
-            img = ImageIO.read(new File("src\\walking\\frame_00_delay-0.02s.png"));
+            img = ImageIO.read(new File("src/Walking/frame_00_delay-0.02s.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -29,7 +29,7 @@ public class Walking implements ActionListener {
             if (idx.length() == 1) {
                 idx = "0" + idx;
             }
-            String filename = "src\\walking\\frame_" + idx + "_delay-0.02s.png";
+            String filename = "src/Walking/frame_" + idx + "_delay-0.02s.png";
             try {
                 images.add(ImageIO.read(new File(filename)));
             }
@@ -59,6 +59,13 @@ public class Walking implements ActionListener {
 
     public void start() {
         timer.start();
+    }
+
+    public void start(boolean val) {
+        if (val) {
+            x = 10;
+        }
+        start();
     }
 
     public void stop() {

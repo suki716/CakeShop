@@ -14,6 +14,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
     private String order;
     private String currScreen;
     //play options
+    private JButton start;
     private JButton nextFrame;
     private JButton back; //in case we can do it
     private JButton clear; //trashcan
@@ -66,7 +67,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
         //logic
         cakeShop = new CakeShop();
         order = "I want a cake!";
-        currScreen = "order";
+        currScreen = "start";
         //dialogue options
         next = new JButton("Next");
         next.addActionListener(this);
@@ -77,6 +78,10 @@ public class DisplayPanel extends JPanel implements ActionListener {
         add(cancel);
 
         //play options
+        start = new JButton("Start");
+        start.addActionListener(this);
+        add(start);
+
         nextFrame = new JButton("NextFrame");
         nextFrame.addActionListener(this);
         add(nextFrame);
@@ -164,7 +169,17 @@ public class DisplayPanel extends JPanel implements ActionListener {
         bgCounter = loadImage("bgCounter.png");
         counter = loadImage("Counter.png");
         walk = new Walking();
-        ordering = loadImage("Ordering.webp");
+        ordering = loadImage("Ordering.png");
+
+        //animation
+        timer = new Timer(30, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (currScreen.equals("order") && walk.getX() <= 400) {
+                    repaint();
+                }
+            }
+        });
+        timer.start();
     }
 
     public void paintComponent(Graphics g) {
@@ -175,18 +190,20 @@ public class DisplayPanel extends JPanel implements ActionListener {
         //constant buttons
         exit.setVisible(true);
         exit.setLocation(10, 10);
-        if (!currScreen.equals("order")) {
+        if (!currScreen.equals("order") && !currScreen.equals("start")) {
             nextFrame.setVisible(true);
             nextFrame.setLocation(675, 425);
         }
-        if (currScreen.equals("order")) {
+        if (currScreen.equals("start")) {
+            start.setVisible(true);
+            start.setLocation(400, 200);
+        } else if (currScreen.equals("order")) {
             //animation
-            walk.start();
-            if (walk.getX() <= 400) {
+            if (walk.getX() < 400) {
                 g.drawImage(walk.getActiveFrame(), walk.getX(), 200, walk.getActiveFrame().getWidth(), walk.getActiveFrame().getHeight(), null);
             } else {
                 walk.stop();
-                g.drawImage(ordering, 400, 200, null);
+                g.drawImage(ordering, 300, 100, null);
                 g.setFont(new Font("Helvetica ", Font.BOLD, 25));
                 g.setColor(Color.BLACK);
                 g.drawString(order, 300, 60);
@@ -195,7 +212,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
                 cancel.setVisible(true);
                 cancel.setLocation(550, 75);
             }
-            //g.drawImage(counter, 0, 0, null);
+            g.drawImage(counter, 0, 0, null);
         } else if (currScreen.equals("batter")) {
             //choose flavor
             vanilla.setVisible(true);
@@ -255,7 +272,10 @@ public class DisplayPanel extends JPanel implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         JButton casted = (JButton) e.getSource();
-        if (currScreen.equals("order") && casted == next) {
+        if (currScreen.equals("start") && casted == start) {
+            currScreen = "order";
+            walk.start();
+        } else if (currScreen.equals("order") && casted == next) {
             currScreen = "batter";
         } else if (currScreen.equals("batter") && casted == nextFrame) {
             currScreen = "layer";
@@ -267,14 +287,15 @@ public class DisplayPanel extends JPanel implements ActionListener {
             currScreen = "stats";
         } else if (currScreen.equals("stats") && casted == nextFrame) {
             currScreen = "order";
+            walk.start(true);
         } else if (currScreen.equals("stats") && casted == spin) {
             currScreen = "spin";
         } else if (currScreen.equals("spin") && casted == nextFrame) {
             currScreen = "order";
+            walk.start(true);
         }
         repaint();
-//
-//
+    }
 //        //if press start: start the day
 //        userCake = cakeShop.startDay();
 //        currCake++;
@@ -284,10 +305,9 @@ public class DisplayPanel extends JPanel implements ActionListener {
 //        int rating = cakeShop.getDay().cakeDone();
 //        //diff animations depending on cake stars;
 
-    }
-
     private void clear() {
         //options
+        start.setVisible(false);
         next.setVisible(false);
         cancel.setVisible(false);
         nextFrame.setVisible(false);
@@ -317,7 +337,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
 
     private BufferedImage loadImage(String path) {
         try {
-            return ImageIO.read(new File("src\\" + path));
+            return ImageIO.read(new File("src/" + path));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
