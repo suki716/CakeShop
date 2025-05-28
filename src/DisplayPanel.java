@@ -68,6 +68,9 @@ public class DisplayPanel extends JPanel implements ActionListener {
     private Timer timer;
     private int x = 10;
 
+    //user decisions
+    private String batter;
+
     public DisplayPanel(JFrame frame) {
         //logic
         cakeShop = new CakeShop();
@@ -92,7 +95,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
         start.addActionListener(this);
         add(start);
 
-        nextFrame = new Button("NextFrame");
+        nextFrame = new Button("NextFrame",  50);
         nextFrame.addActionListener(this);
         add(nextFrame);
 
@@ -100,7 +103,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
         clear.addActionListener(this);
         add(clear);
 
-        exit = new Button("Exit");
+        exit = new Button("Exit", 50);
         exit.addActionListener(this);
         add(exit);
 
@@ -109,15 +112,15 @@ public class DisplayPanel extends JPanel implements ActionListener {
         add(spin);
 
         //batter flavors
-        vanilla = new JButton("vanilla");
+        vanilla = new Button("vanilla", 170);
         vanilla.addActionListener(this);
         add(vanilla);
 
-        chocolate = new JButton("chocolate");
+        chocolate = new Button("chocolate", 170);
         chocolate.addActionListener(this);
         add(chocolate);
 
-        strawberry = new JButton("strawberry");
+        strawberry = new Button("strawberry", 170);
         strawberry.addActionListener(this);
         add(strawberry);
 
@@ -129,7 +132,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
         matcha.addActionListener(this);
         add(matcha);
 
-        cakeLayer = new JButton("cakeLayer");
+        cakeLayer = new Button("cakeLayer", 190);
         cakeLayer.addActionListener(this);
         add(cakeLayer);
 
@@ -176,12 +179,12 @@ public class DisplayPanel extends JPanel implements ActionListener {
         add(leaves);
 
         //images
-        bgCounter = loadImage("bgCounter.png");
-        counter = loadImage("Counter.png");
+        bgCounter = loadImage("Imgs/bgCounter.png");
+        counter = loadImage("Imgs/Counter.png");
         walk = new Walking();
-        ordering = loadImage("Ordering.png");
-        textBubble = loadImage("TextBubble.png");
-        bgBatter = loadImage("bgBatter.png");
+        ordering = loadImage("Imgs/Ordering.png");
+        textBubble = loadImage("Imgs/TextBubble.png");
+        bgBatter = loadImage("Imgs/bgBatter.png");
 
         //animation
         timer = new Timer(30, new ActionListener() {
@@ -200,9 +203,9 @@ public class DisplayPanel extends JPanel implements ActionListener {
         //constant buttons
         exit.setVisible(true);
         exit.setLocation(10, 10);
-        if (!currScreen.equals("order") && !currScreen.equals("start")) {
+        if (!currScreen.equals("order") && !currScreen.equals("start") && !currScreen.equals("batter")) {
             nextFrame.setVisible(true);
-            nextFrame.setLocation(675, 425);
+            nextFrame.setLocation(900, 480);
         }
         //individual stations
         if (currScreen.equals("start")) {
@@ -237,21 +240,24 @@ public class DisplayPanel extends JPanel implements ActionListener {
             g.drawImage(bgBatter, 0, 0, null);
             //choose flavor
             vanilla.setVisible(true);
-            vanilla.setLocation(50, 200);
+            vanilla.setLocation(120, 172);
             chocolate.setVisible(true);
-            chocolate.setLocation(150, 200);
+            chocolate.setLocation(390, 172);
             strawberry.setVisible(true);
-            strawberry.setLocation(250, 200);
-            lemon.setVisible(true);
-            lemon.setLocation(350, 200);
-            matcha.setVisible(true);
-            matcha.setLocation(450, 200);
+            strawberry.setLocation(665, 172);
+//            lemon.setVisible(true);
+//            lemon.setLocation(350, 200);
+//            matcha.setVisible(true);
+//            matcha.setLocation(450, 200);
         } else if (currScreen.equals("layer")) {
+            //different backgrounds depending on batter option
+            if (batter.equals("Vanilla")) {
+                BufferedImage vanilla = loadImage("/VanillaBatter/bgVanilla.png");
+                g.drawImage(vanilla, 0, 0, null);
+            }
             //adding cake layers
             cakeLayer.setVisible(true);
-            cakeLayer.setLocation(10, 425);
-            clear.setVisible(true);
-            clear.setLocation(575, 425);
+            cakeLayer.setLocation(62, 250);
         } else if (currScreen.equals("frosting")) {
             //adding frosting;
             vanillaFrost.setVisible(true);
@@ -298,7 +304,14 @@ public class DisplayPanel extends JPanel implements ActionListener {
             walk.start();
         } else if (currScreen.equals("order") && casted == next) {
             currScreen = "batter";
-        } else if (currScreen.equals("batter") && casted == nextFrame) {
+        } else if (currScreen.equals("batter")) {
+            if (casted == vanilla) {
+                batter = "Vanilla";
+            } else if (casted == strawberry) {
+                batter = "Strawberry";
+            } else if (casted == chocolate) {
+                batter = "Chocolate";
+            }
             currScreen = "layer";
         } else if (currScreen.equals("layer") && casted == nextFrame) {
             currScreen = "frosting";
@@ -315,6 +328,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
             currScreen = "order";
             walk.start(true);
         }
+
         repaint();
     }
 //        //if press start: start the day
@@ -358,7 +372,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
 
     private BufferedImage loadImage(String path) {
         try {
-            return ImageIO.read(new File("src/Imgs/" + path));
+            return ImageIO.read(new File("src/" + path));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
