@@ -88,7 +88,7 @@ class CakeHelper {
         String randomFrosting = frosting.get(randomF).getName();
         int randomT = (int) (Math.random() * toppings.size());
         String randomTopping = toppings.get(randomT).getName();
-        int randomLayer = (int) (Math.random() * 4) + 1;
+        int randomLayer = (int) (Math.random() * 3) + 1;
         int randomFrostingNum = (int) (Math.random() * 8) + 1;
         int randomToppingNum = (int) (Math.random() * 8) + 1;
         return new Cake(randomBatter, randomLayer, randomFrosting, randomFrostingNum, randomTopping, randomToppingNum);
