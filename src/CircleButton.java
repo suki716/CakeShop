@@ -4,9 +4,9 @@ import java.awt.geom.Ellipse2D;
 
 //https://harryjoy.me/2011/08/21/different-button-shapes-in-swing/
 
-public class Button extends JButton {
+public class CircleButton extends JButton {
 
-    public Button(String label, int rad) {
+    public CircleButton(String label, int rad) {
         super(label);
         Dimension size = getPreferredSize();
         size.width = rad;

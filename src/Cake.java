@@ -55,26 +55,28 @@ public class Cake { //comparing correctness
     }
 
     public void addLayer() {
-        if (layer < 3) {
+        if (layer < 2) {
             layer++;
         }
     }
 
     public void chooseBatter(String flavor) {
         batter = flavor;
+        System.out.println(batter);
     }
 
-    public void addFrosting(String flavor) {
-        if (frosting != null){
-            frosting = flavor;
-        }
+    public void chooseFrosting(String flavor) {
+        frosting = flavor;
+        System.out.println(frosting);
+    }
+
+    public void addFrosting() {
         frostingAmt++;
     }
 
-    public void addTopping(String top) {
-        if (topping != null){
-            topping = top;
-        }
+    public void chooseTopping(String top) { topping = top; }
+
+    public void addTopping() {
         toppingAmt++;
     }
 

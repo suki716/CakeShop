@@ -22,7 +22,9 @@ public class DisplayPanel extends JPanel implements ActionListener {
     private JButton back; //in case we can do it
     private JButton clear; //trashcan
     private JButton exit;
+    private JButton finish;
     private JButton spin;
+
     //private JButton recipe;
 
     //batter flavors
@@ -55,6 +57,15 @@ public class DisplayPanel extends JPanel implements ActionListener {
     private BufferedImage counter;
     private BufferedImage textBubble;
     private BufferedImage bgBatter;
+    private BufferedImage bgFrosting;
+
+    //dollop image
+    private BufferedImage vanillaFrostImg;
+    private BufferedImage chocolateFrostImg;
+    private BufferedImage strawberryFrostImg;
+    private BufferedImage peppermintFrostImg;
+    private BufferedImage peachFrostImg;
+
 
     //cookie img
     private BufferedImage ordering;
@@ -70,17 +81,20 @@ public class DisplayPanel extends JPanel implements ActionListener {
 
     //user decisions
     private String batter;
+    private String frosting;
+    private String topping;
 
     public DisplayPanel(JFrame frame) {
         //logic
         cakeShop = new CakeShop();
         currDay = new Day();
         currCake = currDay.newCustomer();
+        userCake = new Cake();
         order1 = "Hello! I want a " + currCake.getCorrectLayer() + "-layered ";
         order2 = currCake.getCorrectBat() + " cake with " + currCake.getCorrectFrostAmt();
         order3 = currCake.getCorrectFrost() + " frosting dollops.";
         order4 = "Oh, and please add " + currCake.getCorrectTopAmt() + " " + currCake.getCorrectTop() + "!";
-        currScreen = "start";
+        currScreen = "frosting";
         //dialogue options
         next = new JButton("Next");
         next.addActionListener(this);
@@ -95,7 +109,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
         start.addActionListener(this);
         add(start);
 
-        nextFrame = new Button("NextFrame",  50);
+        nextFrame = new CircleButton("NextFrame",  50);
         nextFrame.addActionListener(this);
         add(nextFrame);
 
@@ -103,7 +117,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
         clear.addActionListener(this);
         add(clear);
 
-        exit = new Button("Exit", 50);
+        exit = new CircleButton("Exit", 50);
         exit.addActionListener(this);
         add(exit);
 
@@ -112,15 +126,15 @@ public class DisplayPanel extends JPanel implements ActionListener {
         add(spin);
 
         //batter flavors
-        vanilla = new Button("vanilla", 170);
+        vanilla = new CircleButton("vanilla", 170);
         vanilla.addActionListener(this);
         add(vanilla);
 
-        chocolate = new Button("chocolate", 170);
+        chocolate = new CircleButton("chocolate", 170);
         chocolate.addActionListener(this);
         add(chocolate);
 
-        strawberry = new Button("strawberry", 170);
+        strawberry = new CircleButton("strawberry", 170);
         strawberry.addActionListener(this);
         add(strawberry);
 
@@ -132,30 +146,30 @@ public class DisplayPanel extends JPanel implements ActionListener {
         matcha.addActionListener(this);
         add(matcha);
 
-        cakeLayer = new Button("cakeLayer", 190);
+        cakeLayer = new CircleButton("cakeLayer", 190);
         cakeLayer.addActionListener(this);
         add(cakeLayer);
 
         //frosting
-        vanillaFrost = new JButton("vanillaFrost");
+        vanillaFrost = new TriangleButton("vanillaFrost",75, 185);
         vanillaFrost.addActionListener(this);
         add(vanillaFrost);
 
-        chocolateFrost = new JButton("chocolateFrost");
+        chocolateFrost = new TriangleButton("chocolateFrost",75,185);
         chocolateFrost.addActionListener(this);
         add(chocolateFrost);
 
-        strawberryFrost = new JButton("strawberryFrost");
+        strawberryFrost = new TriangleButton("strawberryFrost",75,185);
         strawberryFrost.addActionListener(this);
         add(strawberryFrost);
 
-        peppermintFrost = new JButton("peppermintFrost");
-        peppermintFrost.addActionListener(this);
-        add(peppermintFrost);
+        peppermintFrost = new TriangleButton("peppermintFrost",75,185);
+        //peppermintFrost.addActionListener(this);
+        //add(peppermintFrost);
 
-        peachFrost = new JButton("peachFrost");
-        peachFrost.addActionListener(this);
-        add(peachFrost);
+        peachFrost = new TriangleButton("peachFrost", 75,185);
+        //peachFrost.addActionListener(this);
+        //add(peachFrost);
 
         //toppings
         candles = new JButton("candles");
@@ -185,6 +199,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
         ordering = loadImage("Imgs/Ordering.png");
         textBubble = loadImage("Imgs/TextBubble.png");
         bgBatter = loadImage("Imgs/bgBatter.png");
+        bgFrosting = loadImage("Imgs/bgFrosting.png");
 
         //animation
         timer = new Timer(30, new ActionListener() {
@@ -260,18 +275,19 @@ public class DisplayPanel extends JPanel implements ActionListener {
             cakeLayer.setLocation(62, 250);
         } else if (currScreen.equals("frosting")) {
             //adding frosting;
+            g.drawImage(bgFrosting,0,0,null);
             vanillaFrost.setVisible(true);
-            vanillaFrost.setLocation(450, 100);
+            vanillaFrost.setLocation(200, 270);
             chocolateFrost.setVisible(true);
-            chocolateFrost.setLocation(525, 100);
+            chocolateFrost.setLocation(108, 270);
             strawberryFrost.setVisible(true);
-            strawberryFrost.setLocation(600,100);
+            strawberryFrost.setLocation(682,270);
             peppermintFrost.setVisible(true);
             peppermintFrost.setLocation(525, 130);
             peachFrost.setVisible(true);
             peachFrost.setLocation(600, 130);
-            clear.setVisible(true);
-            clear.setLocation(575, 425);
+//            clear.setVisible(true);
+//            clear.setLocation(575, 425);
         } else if (currScreen.equals("topping")) {
             //add toppings
             candles.setVisible(true);
@@ -306,17 +322,27 @@ public class DisplayPanel extends JPanel implements ActionListener {
             currScreen = "batter";
         } else if (currScreen.equals("batter")) {
             if (casted == vanilla) {
-                batter = "Vanilla";
+                userCake.chooseBatter("vanilla");
             } else if (casted == strawberry) {
-                batter = "Strawberry";
+                userCake.chooseBatter("strawberry");
             } else if (casted == chocolate) {
-                batter = "Chocolate";
+                userCake.chooseBatter("chocolate");
             }
+
             currScreen = "layer";
         } else if (currScreen.equals("layer") && casted == nextFrame) {
             currScreen = "frosting";
-        } else if (currScreen.equals("frosting") && casted == nextFrame) {
-            currScreen = "topping";
+        } else if (currScreen.equals("frosting")){
+            if (casted == vanillaFrost) {
+                userCake.chooseFrosting("vanilla");
+            } else if (casted == strawberryFrost) {
+                userCake.chooseFrosting("strawberry");
+            } else if (casted == chocolateFrost) {
+                userCake.chooseFrosting("chocolate");
+            }
+            if (casted == nextFrame) {
+                currScreen = "topping";
+            }
         } else if (currScreen.equals("topping") && casted == nextFrame) {
             currScreen = "stats";
         } else if (currScreen.equals("stats") && casted == nextFrame) {
@@ -331,14 +357,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
 
         repaint();
     }
-//        //if press start: start the day
-//        userCake = cakeShop.startDay();
-//        currCake++;
-//        //buttons + graphics + determining cake accuracy
-//
-//        //after cake is done
-//        int rating = cakeShop.getDay().cakeDone();
-//        //diff animations depending on cake stars;
+
 
     private void clear() {
         //options
