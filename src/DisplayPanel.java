@@ -40,6 +40,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
     private JButton strawberryFrost;
     private JButton peppermintFrost; //locked
     private JButton peachFrost; //locked
+
     //toppings
     private JButton candles;
     private JButton strawberries;
@@ -68,6 +69,14 @@ public class DisplayPanel extends JPanel implements ActionListener {
     private Timer timer;
     private int x = 10;
 
+    //layers
+    private int layers = 1;
+    private BufferedImage cakeChoice;
+    private boolean drawLayer = false;
+    private FrostingAnimation frostingAnimation;
+    private boolean frost = false;
+    private boolean nextLayer = false;
+
     //user decisions
     private String batter;
 
@@ -80,7 +89,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
         order2 = currCake.getCorrectBat() + " cake with " + currCake.getCorrectFrostAmt();
         order3 = currCake.getCorrectFrost() + " frosting dollops.";
         order4 = "Oh, and please add " + currCake.getCorrectTopAmt() + " " + currCake.getCorrectTop() + "!";
-        currScreen = "start";
+        currScreen = "batter";
         //dialogue options
         next = new JButton("Next");
         next.addActionListener(this);
@@ -135,6 +144,10 @@ public class DisplayPanel extends JPanel implements ActionListener {
         cakeLayer = new Button("cakeLayer", 190);
         cakeLayer.addActionListener(this);
         add(cakeLayer);
+
+        frostingKnife = new JButton("frostingKnife");
+        frostingKnife.addActionListener(this);
+        add(frostingKnife);
 
         //frosting
         vanillaFrost = new JButton("vanillaFrost");
@@ -251,13 +264,33 @@ public class DisplayPanel extends JPanel implements ActionListener {
 //            matcha.setLocation(450, 200);
         } else if (currScreen.equals("layer")) {
             //different backgrounds depending on batter option
-            if (batter.equals("Vanilla")) {
-                BufferedImage vanilla = loadImage("/VanillaBatter/bgVanilla.png");
-                g.drawImage(vanilla, 0, 0, null);
+            if (cakeChoice == null) {
+                cakeChoice = loadImage("/" + batter + "Batter/bg" + batter + ".png");
             }
+            g.drawImage(cakeChoice, 0, 0, null);
             //adding cake layers
+            frostingKnife.setVisible(true);
+            Dimension size = getPreferredSize();
+            size.width = 70;
+            size.height = 280;
+            frostingKnife.setPreferredSize(size);
+            frostingKnife.setLocation(830, 190);
             cakeLayer.setVisible(true);
             cakeLayer.setLocation(62, 250);
+            if (frost) {
+                if (!nextLayer) {
+                    cakeChoice = loadImage("/" + batter + "Batter/" + batter + "Frosted.png");
+                } //else {
+
+                //}
+            }
+            if (frost && nextLayer) {
+                cakeChoice = loadImage("/" + batter + "Batter/" + batter + "2Layer.png");
+            }
+            g.drawImage(cakeChoice, 0, 0, null);
+        } else if (currScreen.equals("frosting") && drawLayer) {
+            g.drawImage(cakeChoice, 0, 0, null);
+            g.drawImage(frostingAnimation.getActiveFrame(), 0, 0, null);
         } else if (currScreen.equals("frosting")) {
             //adding frosting;
             vanillaFrost.setVisible(true);
@@ -312,9 +345,25 @@ public class DisplayPanel extends JPanel implements ActionListener {
             } else if (casted == chocolate) {
                 batter = "Chocolate";
             }
+            if (batter != null) {
+                frostingAnimation = new FrostingAnimation(batter);
+            }
+            if (casted == frostingKnife) {
+
+            }
             currScreen = "layer";
-        } else if (currScreen.equals("layer") && casted == nextFrame) {
-            currScreen = "frosting";
+        } else if (currScreen.equals("layer")) {
+            if (casted == nextFrame) {
+                drawLayer = true;
+                frostingAnimation.start();
+                currScreen = "frosting";
+            } else if (casted == frostingKnife) {
+                frost = true;
+            } else if (casted == cakeLayer && frost) {
+                nextLayer = true;
+            }
+        } else if (currScreen.equals("frosting") && casted == nextFrame && drawLayer) {
+            drawLayer = false;
         } else if (currScreen.equals("frosting") && casted == nextFrame) {
             currScreen = "topping";
         } else if (currScreen.equals("topping") && casted == nextFrame) {
@@ -356,6 +405,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
         lemon.setVisible(false);
         matcha.setVisible(false);
         cakeLayer.setVisible(false);
+        frostingKnife.setVisible(false);
         //frost
         vanillaFrost.setVisible(false);
         chocolateFrost.setVisible(false);
