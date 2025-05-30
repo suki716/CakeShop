@@ -1,13 +1,26 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Frame;
+import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.font.TextAttribute;
+import java.awt.im.InputMethodHighlight;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Properties;
 
-public class DisplayPanel extends JPanel implements ActionListener {
+public class DisplayPanel extends JPanel implements ActionListener, MouseListener {
     //dialogue options
     private JButton next;
     private JButton cancel;
@@ -67,7 +80,6 @@ public class DisplayPanel extends JPanel implements ActionListener {
     private BufferedImage peppermintFrostImg;
     private BufferedImage peachFrostImg;
 
-
     //cookie img
     private BufferedImage ordering;
 
@@ -88,6 +100,13 @@ public class DisplayPanel extends JPanel implements ActionListener {
     private boolean frost = false;
     private boolean nextLayer = false;
 
+    //...
+    private Toolkit toolkit;
+
+    //frosting
+    private ArrayList<Dallop> dallops = new ArrayList<>();
+    private String frostingFlavor;
+
     //user decisions
     private String batter;
     private String frosting;
@@ -103,7 +122,8 @@ public class DisplayPanel extends JPanel implements ActionListener {
         order2 = currCake.getCorrectBat() + " cake with " + currCake.getCorrectFrostAmt();
         order3 = currCake.getCorrectFrost() + " frosting dollops.";
         order4 = "Oh, and please add " + currCake.getCorrectTopAmt() + " " + currCake.getCorrectTop() + "!";
-        currScreen = "start";
+        currScreen = "batter";
+        addMouseListener(this);
         //dialogue options
         next = new JButton("Next");
         next.addActionListener(this);
@@ -253,9 +273,9 @@ public class DisplayPanel extends JPanel implements ActionListener {
                 g.setFont(new Font("Helvetica ", Font.BOLD, 20));
                 g.setColor(Color.BLACK);
                 g.drawString(order1, 275, 75);
-                g.drawString(order2,275, 95);
-                g.drawString(order3, 275,115);
-                g.drawString(order4,275,135);
+                g.drawString(order2, 275, 95);
+                g.drawString(order3, 275, 115);
+                g.drawString(order4, 275, 135);
                 g.drawString("Thank You!", 275, 155);
                 next.setVisible(true);
                 next.setLocation(550, 45);
@@ -279,7 +299,7 @@ public class DisplayPanel extends JPanel implements ActionListener {
 //            matcha.setLocation(450, 200);
         } else if (currScreen.equals("layer")) {
             //different backgrounds depending on batter option
-            if (cakeChoice == null) {
+            if (batter != null) {
                 cakeChoice = loadImage("/" + batter + "Batter/bg" + batter + ".png");
             }
             g.drawImage(cakeChoice, 0, 0, null);
@@ -292,12 +312,8 @@ public class DisplayPanel extends JPanel implements ActionListener {
             frostingKnife.setLocation(830, 190);
             cakeLayer.setVisible(true);
             cakeLayer.setLocation(62, 250);
-            if (frost) {
-                if (!nextLayer) {
-                    cakeChoice = loadImage("/" + batter + "Batter/" + batter + "Frosted.png");
-                } //else {
-
-                //}
+            if (frost && !nextLayer) {
+                cakeChoice = loadImage("/" + batter + "Batter/" + batter + "Frosted.png");
             }
             if (frost && nextLayer) {
                 cakeChoice = loadImage("/" + batter + "Batter/" + batter + "2Layer.png");
@@ -308,19 +324,17 @@ public class DisplayPanel extends JPanel implements ActionListener {
             g.drawImage(frostingAnimation.getActiveFrame(), 0, 0, null);
         } else if (currScreen.equals("frosting")) {
             //adding frosting;
-            g.drawImage(bgFrosting,0,0,null);
+            g.drawImage(bgFrosting, 0, 0, null);
+            g.drawImage(frostingAnimation.getActiveFrame(), 0, 0, null);
             vanillaFrost.setVisible(true);
             vanillaFrost.setLocation(200, 270);
             chocolateFrost.setVisible(true);
             chocolateFrost.setLocation(108, 270);
             strawberryFrost.setVisible(true);
-            strawberryFrost.setLocation(682,270);
-            peppermintFrost.setVisible(true);
-            peppermintFrost.setLocation(525, 130);
-            peachFrost.setVisible(true);
-            peachFrost.setLocation(600, 130);
-//            clear.setVisible(true);
-//            clear.setLocation(575, 425);
+            strawberryFrost.setLocation(682, 270);
+            //Image image = toolkit.getImage("src/Frosting/VanillaPiping.png");
+            //Cursor customCursor = toolkit.createCustomCursor(image , new Point(0, 8), "img");
+            //this.setCursor(customCursor);
         } else if (currScreen.equals("topping")) {
             //add toppings
             candles.setVisible(true);
@@ -344,6 +358,13 @@ public class DisplayPanel extends JPanel implements ActionListener {
             spin.setVisible(true);
             spin.setLocation(200, 300);
         }
+
+        //drawing dallops
+        if (!dallops.isEmpty()) {
+            for (Dallop dallop : dallops) {
+                g.drawImage(dallop.getImage(), dallop.getxCoord(), dallop.getyCoord(), null);
+            }
+        }
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -356,35 +377,22 @@ public class DisplayPanel extends JPanel implements ActionListener {
         } else if (currScreen.equals("batter")) {
             if (casted == vanilla) {
                 userCake.chooseBatter("vanilla");
+                batter = "Vanilla";
             } else if (casted == strawberry) {
                 userCake.chooseBatter("strawberry");
+                batter = "Strawberry";
             } else if (casted == chocolate) {
                 userCake.chooseBatter("chocolate");
                 batter = "Chocolate";
             }
             if (batter != null) {
-                frostingAnimation = new FrostingAnimation(batter);
-            }
-            if (casted == frostingKnife) {
-
-            }
-
-            currScreen = "layer";
-        } else if (currScreen.equals("layer") && casted == nextFrame) {
-            currScreen = "frosting";
-        } else if (currScreen.equals("frosting")){
-            if (casted == vanillaFrost) {
-                userCake.chooseFrosting("vanilla");
-            } else if (casted == strawberryFrost) {
-                userCake.chooseFrosting("strawberry");
-            } else if (casted == chocolateFrost) {
-                userCake.chooseFrosting("chocolate");
-            }
-            if (casted == nextFrame) {
-                currScreen = "topping";
+                currScreen = "layer";
             }
         } else if (currScreen.equals("layer")) {
             if (casted == nextFrame) {
+                if (frostingAnimation == null) {
+                    frostingAnimation = new FrostingAnimation(batter, "");
+                }
                 drawLayer = true;
                 frostingAnimation.start();
                 currScreen = "frosting";
@@ -392,11 +400,24 @@ public class DisplayPanel extends JPanel implements ActionListener {
                 frost = true;
             } else if (casted == cakeLayer && frost) {
                 nextLayer = true;
+                frostingAnimation = new FrostingAnimation(batter, "2");
             }
         } else if (currScreen.equals("frosting") && casted == nextFrame && drawLayer) {
             drawLayer = false;
-        } else if (currScreen.equals("frosting") && casted == nextFrame) {
-            currScreen = "topping";
+        } else if (currScreen.equals("frosting")){
+            if (casted == vanillaFrost) {
+                userCake.chooseFrosting("vanilla");
+                frostingFlavor = "Vanilla";
+            } else if (casted == strawberryFrost) {
+                userCake.chooseFrosting("strawberry");
+                frostingFlavor = "Strawberry";
+            } else if (casted == chocolateFrost) {
+                userCake.chooseFrosting("chocolate");
+                frostingFlavor = "Chocolate";
+            }
+            if (casted == nextFrame) {
+                currScreen = "topping";
+            }
         } else if (currScreen.equals("topping") && casted == nextFrame) {
             currScreen = "stats";
         } else if (currScreen.equals("stats") && casted == nextFrame) {
@@ -408,8 +429,36 @@ public class DisplayPanel extends JPanel implements ActionListener {
             currScreen = "order";
             walk.start(true);
         }
-
         repaint();
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON1 && frostingFlavor != null) {  // left mouse click
+            Point mouseClickLocation = e.getPoint();
+            Dallop dallop = new Dallop(mouseClickLocation.x, mouseClickLocation.y, frostingFlavor);
+            dallops.add(dallop);
+        }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
     }
 
 

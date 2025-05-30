@@ -13,9 +13,9 @@ public class FrostingAnimation implements ActionListener {
     private int currentFrame;
     private BufferedImage img;
 
-    public FrostingAnimation(String batter) {
+    public FrostingAnimation(String batter, String str) {
         try {
-            img = ImageIO.read(new File("src/" + batter + "Batter/" + batter + "-00.png"));
+            img = ImageIO.read(new File("src/" + batter + "Batter/" + batter + str + "-00.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -26,7 +26,7 @@ public class FrostingAnimation implements ActionListener {
             if (idx.length() == 1) {
                 idx = "0" + idx;
             }
-            String filename = "src/" + batter + "Batter/" + batter + "-" + idx + ".png";
+            String filename = "src/" + batter + "Batter/" + batter + str + "-" + idx + ".png";
             try {
                 images.add(ImageIO.read(new File(filename)));
             }
