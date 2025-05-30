@@ -1,24 +1,17 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.Frame;
-import java.awt.datatransfer.Clipboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.font.TextAttribute;
-import java.awt.im.InputMethodHighlight;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Properties;
+import java.awt.Cursor;
+import java.awt.Point;
+import java.awt.Toolkit;
 
 public class DisplayPanel extends JPanel implements ActionListener, MouseListener {
     //dialogue options
@@ -100,8 +93,10 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private boolean frost = false;
     private boolean nextLayer = false;
 
-    //...
-    private Toolkit toolkit;
+    //custom cursor
+    private Cursor defaultCursor;
+    private Cursor customCursor;
+    private boolean isCustomCursor = false;
 
     //frosting
     private ArrayList<Dallop> dallops = new ArrayList<>();
@@ -111,6 +106,9 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private String batter;
     private String frosting;
     private String topping;
+
+    //limiting placement of toppings
+    private BufferedImage cakeMask;
 
     public DisplayPanel(JFrame frame) {
         //logic
@@ -233,6 +231,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         textBubble = loadImage("Imgs/TextBubble.png");
         bgBatter = loadImage("Imgs/bgBatter.png");
         bgFrosting = loadImage("Imgs/bgFrosting.png");
+        cakeMask = loadImage("Imgs/cakeMask.png");
 
         //animation
         timer = new Timer(30, new ActionListener() {
@@ -243,6 +242,9 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             }
         });
         timer.start();
+
+        //custom cursor
+        defaultCursor = this.getCursor();
     }
 
     public void paintComponent(Graphics g) {
@@ -415,6 +417,10 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 userCake.chooseFrosting("chocolate");
                 frostingFlavor = "Chocolate";
             }
+            if (casted != nextFrame) {
+                loadCustomCursor("Frosting/" + frostingFlavor + "Piping.png", 200);
+                toggleCursor();
+            }
             if (casted == nextFrame) {
                 currScreen = "topping";
             }
@@ -436,31 +442,28 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     public void mouseReleased(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1 && frostingFlavor != null) {  // left mouse click
             Point mouseClickLocation = e.getPoint();
-            Dallop dallop = new Dallop(mouseClickLocation.x, mouseClickLocation.y, frostingFlavor);
-            dallops.add(dallop);
+            if (isPointInValidArea(mouseClickLocation.x, mouseClickLocation.y)) {
+                Dallop dallop = new Dallop(mouseClickLocation.x, mouseClickLocation.y, frostingFlavor);
+                dallops.add(dallop);
+            }
         }
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-
     }
-
 
     private void clear() {
         //options
@@ -500,5 +503,35 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             System.out.println(e.getMessage());
         }
         return null;
+    }
+
+    private void loadCustomCursor(String path, int offsetY) {
+        try {
+            BufferedImage cursorImg = ImageIO.read(new File("src/" + path));
+            customCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, offsetY), "custom");
+        } catch (IOException e) {
+            customCursor = defaultCursor;
+        }
+    }
+
+    private void toggleCursor() {
+        if (customCursor != null) {
+            if (isCustomCursor) {
+                this.setCursor(defaultCursor);
+            } else {
+                this.setCursor(customCursor);
+            }
+            isCustomCursor = !isCustomCursor;
+        }
+    }
+
+    private boolean isPointInValidArea(int x, int y) {
+        //check if point is within image bounds
+        if (x < 0 || y < 0 || x >= cakeMask.getWidth() || y >= cakeMask.getHeight()) {
+            return false;
+        }
+        //check if pixel at (x,y) is not transparent
+        int pixel = cakeMask.getRGB(x, y);
+        return (pixel >> 24) != 0x00;
     }
 }
