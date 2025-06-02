@@ -65,6 +65,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private BufferedImage textBubble;
     private BufferedImage bgBatter;
     private BufferedImage bgFrosting;
+    private BufferedImage bgTopping;
 
     //dollop image
     private BufferedImage vanillaFrostImg;
@@ -101,6 +102,10 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     //frosting
     private ArrayList<Dallop> dallops = new ArrayList<>();
     private String frostingFlavor;
+
+    //topping
+    private ArrayList<Topping> toppings = new ArrayList<>();
+    private String toppingChoice;
 
     //user decisions
     private String batter;
@@ -203,25 +208,25 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         //add(peachFrost);
 
         //toppings
-        candles = new JButton("candles");
+        candles = new CircleButton("candles",100);
         candles.addActionListener(this);
         add(candles);
 
-        strawberries = new JButton("strawberries");
+        strawberries = new CircleButton("strawberries",100);
         strawberries.addActionListener(this);
         add(strawberries);
 
-        chocolateBar = new JButton("chocolateBar");
+        chocolateBar = new CircleButton("chocolateBar",100);
         chocolateBar.addActionListener(this);
         add(chocolateBar);
 
         cinnamonStick = new JButton("cinnamonStick");
         cinnamonStick.addActionListener(this);
-        add(cinnamonStick);
+//        add(cinnamonStick);
 
         leaves = new JButton("leaves");
         leaves.addActionListener(this);
-        add(leaves);
+//        add(leaves);
 
         //images
         bgCounter = loadImage("Imgs/bgCounter.png");
@@ -231,6 +236,8 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         textBubble = loadImage("Imgs/TextBubble.png");
         bgBatter = loadImage("Imgs/bgBatter.png");
         bgFrosting = loadImage("Imgs/bgFrosting.png");
+        bgTopping = loadImage("Imgs/bgTopping.png");
+
         cakeMask = loadImage("Imgs/cakeMask.png");
 
         //animation
@@ -339,18 +346,18 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             //this.setCursor(customCursor);
         } else if (currScreen.equals("topping")) {
             //add toppings
+            g.drawImage(bgTopping, 0,0,null);
+            g.drawImage(frostingAnimation.getActiveFrame(), 0, 0, null);
             candles.setVisible(true);
-            candles.setLocation(50, 100);
+            candles.setLocation(172, 200);
             strawberries.setVisible(true);
-            strawberries.setLocation(200, 100);
+            strawberries.setLocation(690, 200);
             chocolateBar.setVisible(true);
-            chocolateBar.setLocation(50, 150);
-            cinnamonStick.setVisible(true);
-            cinnamonStick.setLocation(500, 100);
-            leaves.setVisible(true);
-            leaves.setLocation(600, 100);
-            clear.setVisible(true);
-            clear.setLocation(575, 425);
+            chocolateBar.setLocation(172, 340);
+//            cinnamonStick.setVisible(true);
+//            cinnamonStick.setLocation(500, 100);
+//            leaves.setVisible(true);
+//            leaves.setLocation(600, 100);
         } else if (currScreen.equals("stats")) {
             //show stats
             spin.setVisible(true);
@@ -365,6 +372,13 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         if (!dallops.isEmpty()) {
             for (Dallop dallop : dallops) {
                 g.drawImage(dallop.getImage(), dallop.getxCoord(), dallop.getyCoord(), null);
+            }
+        }
+
+        //drawing toppings
+        if(!toppings.isEmpty()){
+            for(Topping topping : toppings){
+                g.drawImage(topping.getImage(), topping.getxCoord(), topping.getyCoord(), null);
             }
         }
     }
@@ -425,7 +439,24 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 currScreen = "topping";
             }
         } else if (currScreen.equals("topping") && casted == nextFrame) {
-            currScreen = "stats";
+            frostingFlavor = null;
+            if (casted == candles) {
+                userCake.chooseTopping("candles");
+                toppingChoice = "Candle";
+            } else if (casted == strawberryFrost) {
+                userCake.chooseTopping("strawberries");
+                toppingChoice = "Strawberry";
+            } else if (casted == chocolateFrost) {
+                userCake.chooseFrosting("chocolate");
+                toppingChoice = "Chocolate";
+            }
+            if (casted != nextFrame) {
+                loadCustomCursor("Toppings/" + topping + "Topping.png", 200);
+                toggleCursor();
+            }
+            if (casted == nextFrame) {
+                currScreen = "stats";
+            }
         } else if (currScreen.equals("stats") && casted == nextFrame) {
             currScreen = "order";
             walk.start(true);
@@ -447,6 +478,15 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 dallops.add(dallop);
             }
         }
+
+        if(e.getButton() == MouseEvent.BUTTON1 && toppingChoice != null){
+            Point mouseClickLocation = e.getPoint();
+            if (isPointInValidArea(mouseClickLocation.x, mouseClickLocation.y)) {
+                Topping topping = new Topping(mouseClickLocation.x, mouseClickLocation.y, toppingChoice);
+                toppings.add(topping);
+            }
+        }
+
     }
 
     @Override
