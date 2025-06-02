@@ -61,24 +61,29 @@ class CakeHelper {
         newToppings.add(leaf);
     }
 
-    public static void addRandomIngredient(){
+    public static Ingredient addRandomIngredient(){
         int randomCategory = (int) (Math.random() * 3);
         boolean valid = false;
+        Ingredient random = new Ingredient("",0,false);
         while (!valid) {
             if (randomCategory == 0 && !isFull(batters)) {
                 int randomItem = (int) (Math.random() * newBatters.size());
+                random = newBatters.get(randomItem);
                 batters.add(newBatters.remove(randomItem));
                 valid = true;
             } else if (randomCategory == 1 && !isFull(frosting)) {
                 int randomItem = (int) (Math.random() * newFrosting.size());
+                random = newFrosting.get(randomItem);
                 frosting.add(newFrosting.remove(randomItem));
                 valid = true;
             } else if (randomCategory == 2 && !isFull(toppings)) {
                 int randomItem = (int) (Math.random() * newToppings.size());
+                random = newToppings.get(randomItem);
                 toppings.add(newToppings.remove(randomItem));
                 valid = true;
             }
         }
+        return random;
     }
 
     public static Cake randomCake(){
