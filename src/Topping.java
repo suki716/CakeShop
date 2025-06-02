@@ -9,10 +9,10 @@ public class Topping {
     private BufferedImage image;
 
     public Topping(int x, int y, String topping) {
-        xCoord = x - 475;
-        yCoord = y - 260;
+        xCoord = x - 473;
+        yCoord = y - 255;
         try {
-            image = ImageIO.read(new File("src/Topping/" + topping + "Topping.png"));
+            image = ImageIO.read(new File("src/Toppings/" + topping + "Topping.png"));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

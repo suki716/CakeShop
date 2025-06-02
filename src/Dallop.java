@@ -10,7 +10,7 @@ public class Dallop {
 
     public Dallop(int x, int y, String flavor) {
         xCoord = x - 475;
-        yCoord = y - 260;
+        yCoord = y - 280;
         try {
             image = ImageIO.read(new File("src/Frosting/" + flavor + "Frost.png"));
         } catch (IOException e) {
