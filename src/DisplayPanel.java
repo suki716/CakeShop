@@ -10,7 +10,7 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Toolkit;
 
-public class DisplayPanel extends JPanel implements ActionListener, MouseListener, MouseMotionListener {
+public class DisplayPanel extends JPanel implements ActionListener, MouseListener {
     //dialogue options
     private JButton next;
     private JButton cancel;
@@ -443,7 +443,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 frostingFlavor = "Chocolate";
             }
             if (casted != nextFrame) {
-                loadCustomCursor("Frosting/" + frostingFlavor + "Piping.png", 200);
+                loadCustomCursor("Frosting/" + frostingFlavor + "Piping.png", 0, 190);
                 toggleCursor();
             }
             if (casted == nextFrame) {
@@ -462,7 +462,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 toppingChoice = "Chocolate";
             }
             if (casted != nextFrame) {
-                loadCustomCursor("Toppings/" + topping + "Topping.png", 200);
+                loadCustomCursor("Toppings/" + topping + "Topping.png", 0, 190);
                 toggleCursor();
             }
             if (casted == nextFrame) {
@@ -562,10 +562,19 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         return null;
     }
 
-    private void loadCustomCursor(String path, int offsetY) {
+    private void loadCustomCursor(String path, int hotspotX, int hotspotY) {
         try {
             BufferedImage cursorImg = ImageIO.read(new File("src/" + path));
-            customCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "custom");
+            Dimension bestSize = Toolkit.getDefaultToolkit().getBestCursorSize(cursorImg.getWidth(), cursorImg.getHeight());
+            if (bestSize.width != cursorImg.getWidth() || bestSize.height != cursorImg.getHeight()) {
+                BufferedImage compatibleImg = new BufferedImage(bestSize.width, bestSize.height, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2d = compatibleImg.createGraphics();
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+                g2d.drawImage(cursorImg, 0, 0, bestSize.width, bestSize.height, null);
+                g2d.dispose();
+                cursorImg = compatibleImg;
+            }
+            customCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(hotspotX, hotspotY), "custom");
         } catch (IOException e) {
             customCursor = defaultCursor;
         }
@@ -590,15 +599,5 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         //check if pixel at (x,y) is not transparent
         int pixel = cakeMask.getRGB(x, y);
         return (pixel >> 24) != 0x00;
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-
     }
 }
