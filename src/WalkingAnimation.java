@@ -7,14 +7,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Walking implements ActionListener {
+public class WalkingAnimation implements ActionListener {
     private ArrayList<BufferedImage> frames;
     private Timer timer;
     private int currentFrame;
     private BufferedImage img;
     private int x = 10;
 
-    public Walking() {
+    public WalkingAnimation() {
         try {
             img = ImageIO.read(new File("src/Walking/frame_00_delay-0.02s.png"));
         } catch (IOException e) {
