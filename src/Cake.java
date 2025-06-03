@@ -2,12 +2,12 @@ public class Cake { //comparing correctness
     private final int MAX_LAYERS = 4;
     private int rating = 0;
     //correct recipe
-    private String correctBat;
-    private int correctLayer;
-    private String correctFrost;
-    private int correctFrostAmt;
-    private String correctTop;
-    private int correctTopAmt;
+    public static String correctBat;
+    public static int correctLayer;
+    public static String correctFrost;
+    public static int correctFrostAmt;
+    public static String correctTop;
+    public static int correctTopAmt;
     //what you made
     private String batter;
     private int layer;
@@ -18,15 +18,17 @@ public class Cake { //comparing correctness
 
     //initializing correct customer cake
     public Cake(String batter, int layer, String frosting, int frostAmt, String topping, int toppingAmt) {
-        this.correctBat = batter;
-        this.correctLayer = layer;
-        this.correctFrost = frosting;
-        this.correctFrostAmt = frostAmt;
-        this.correctTop= topping;
-        this.correctTopAmt = toppingAmt;
+        correctBat = batter;
+        correctLayer = layer;
+        correctFrost = frosting;
+        correctFrostAmt = frostAmt;
+        correctTop= topping;
+        correctTopAmt = toppingAmt;
     }
 
-    public Cake() {}
+    public Cake() {
+        layer = 1;
+    }
 
 
     //getters
@@ -55,9 +57,7 @@ public class Cake { //comparing correctness
     }
 
     public void addLayer() {
-        if (layer < 2) {
-            layer++;
-        }
+        layer++;
     }
 
     public void chooseBatter(String flavor) {
@@ -83,27 +83,40 @@ public class Cake { //comparing correctness
     public int calculateRating() {
         if (batter.equals(correctBat)){
             rating++;
+            System.out.println(batter);
+            System.out.println("correct Batter");
         }
 
         if (layer == correctLayer) {
             rating++;
+            System.out.println(layer);
+            System.out.println("correct layer");
         }
 
         if (frosting.equals(correctFrost)) {
             rating++;
+            System.out.println(frosting);
+            System.out.println("correct frsoting");
         }
 
         if (frostingAmt == correctFrostAmt) {
             rating++;
+            System.out.println(frostingAmt);
+            System.out.println("correct frosting amt");
         }
 
         if (toppingAmt == correctTopAmt) {
             rating++;
+            System.out.println(toppingAmt);
+            System.out.println("correct topping amt");
         }
 
-        if (toppingAmt == correctTopAmt) {
+        if (topping.equals(correctTop)) {
             rating++;
+            System.out.println(topping);
+            System.out.println("correct topping");
         }
+        System.out.println(rating);
         return rating;
     }
 
