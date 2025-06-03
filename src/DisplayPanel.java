@@ -118,9 +118,10 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private String topping;
 
     //spinning
-    BufferedImage bgSpin = loadImage("Spinning/Spinning-00.png");
-    SpinningAnimation spinningAnimation = new SpinningAnimation();
-    boolean spun = false;
+    private BufferedImage bgSpin = loadImage("Spinning/Spinning-00.png");
+    private SpinningAnimation spinningAnimation = new SpinningAnimation();
+    private boolean spun = false;
+    private int numSpins = 0;
 
     //limiting placement of toppings
     private BufferedImage cakeMask;
@@ -249,8 +250,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         bgFrosting = loadImage("Imgs/bgFrosting.png");
         bgTopping = loadImage("Imgs/bgTopping.png");
 
-        cakeMask = loadImage("Imgs/cakeMask.png");
-
         //animation
         timer = new Timer(30, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -269,6 +268,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         clear();
+        changeImg();
         //constant buttons
         exit.setVisible(true);
         exit.setLocation(10, 10);
@@ -439,6 +439,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             if (casted == nextFrame) {
                 if (frostingAnimation == null) {
                     frostingAnimation = new FrostingAnimation(batter, "");
+                    cakeMask = loadImage("Imgs/cakeMask1.png");
                 }
                 drawLayer = true;
                 frostingAnimation.start();
@@ -449,6 +450,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 nextLayer = true;
                 userCake.addLayer();
                 frostingAnimation = new FrostingAnimation(batter, "2");
+                cakeMask = loadImage("Imgs/cakeMask2.png");
             }
         } else if (currScreen.equals("frosting") && casted == nextFrame && drawLayer) {
             drawLayer = false;
@@ -503,9 +505,10 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 currScreen = "order";
                 walk.start(true);
             }
-            if (casted == spin) {
+            if (casted == spin && numSpins <= 5) {
                 spinningAnimation.start();
                 spun = true;
+                numSpins++;
             }
         }
         repaint();
@@ -635,6 +638,33 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             showCustomCursor = false;
         } else {
             showCustomCursor = true;
+        }
+    }
+
+    private void changeImg() {
+        //diff batter bgs
+        if (CakeHelper.batters.size() == 5) {
+            bgBatter = loadImage("Imgs/bgBatter2.png");
+        } else if (CakeHelper.batters.size() == 4) {
+            bgBatter = loadImage("Imgs/bgBatter1.png");
+        } else {
+            bgBatter = loadImage("Imgs/bgBatter.png");
+        }
+        //diff frosting bgs
+        if (CakeHelper.frosting.size() == 5) {
+            bgFrosting = loadImage("Imgs/bgFrosting2.png");
+        } else if (CakeHelper.frosting.size() == 4) {
+            bgFrosting = loadImage("Imgs/bgFrosting1.png");
+        } else {
+            bgFrosting = loadImage("Imgs/bgFrosting.png");
+        }
+        //diff frosting bgs
+        if (CakeHelper.toppings.size() == 5) {
+            bgTopping = loadImage("Imgs/bgTopping2.png");
+        } else if (CakeHelper.toppings.size() == 4) {
+            bgTopping = loadImage("Imgs/bgTopping1.png");
+        } else {
+            bgTopping = loadImage("Imgs/bgTopping.png");
         }
     }
 
