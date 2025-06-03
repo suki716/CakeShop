@@ -462,10 +462,11 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 frostingFlavor = "Chocolate";
             }
             if (casted != nextFrame) {
+                toggleCursor(frostingFlavor);
                 currentCursorType = frostingFlavor;
-                loadCustomCursor("Frosting/" + frostingFlavor + "Piping.png", 0, 185);
+                loadCustomCursor("Frosting/" + frostingFlavor + "Piping.png", 5, 205);
             }
-            if (casted == nextFrame && this.getCursor() == defaultCursor) {
+            if (casted == nextFrame && !showCustomCursor) {
                 currScreen = "topping";
             }
         } else if (currScreen.equals("topping")) {
@@ -475,16 +476,17 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 toppingChoice = "Candle";
             } else if (casted == strawberries) {
                 userCake.chooseTopping("strawberries");
-                toppingChoice = "Strawberry";
+                toppingChoice = "Strawberries";
             } else if (casted == chocolateBar) {
                 userCake.chooseFrosting("chocolate");
-                toppingChoice = "Chocolate";
+                toppingChoice = "ChocolateBar";
             }
             if (casted != nextFrame) {
+                toggleCursor(toppingChoice);
                 currentCursorType = toppingChoice;
-                loadCustomCursor("Toppings/" + toppingChoice + "Topping.png", 355, 217);
+                loadCustomCursor("Toppings/" + toppingChoice + "Topping.png", 470, 265);
             }
-            if (casted == nextFrame && this.getCursor() == defaultCursor) {
+            if (casted == nextFrame && !showCustomCursor) {
                 currScreen = "stats";
                 resetCake();
             }
@@ -509,12 +511,12 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     @Override
     public void mouseReleased(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1 && showCustomCursor && currentCursorType != null) {
-            Point clickPoint = new Point(cursorPosition.x - cursorOffsetX, cursorPosition.y - cursorOffsetY);
+            Point clickPoint = new Point(cursorPosition.x, cursorPosition.y);
             if (isPointInValidArea(clickPoint.x, clickPoint.y)) {
                 if (currentCursorType.equals("Vanilla") || currentCursorType.equals("Strawberry") || currentCursorType.equals("Chocolate")) {
                     Dallop dallop = new Dallop(clickPoint.x, clickPoint.y, currentCursorType);
                     dallops.add(dallop);
-                } else if (currentCursorType.equals("Candle") || currentCursorType.equals("Strawberry") || currentCursorType.equals("Chocolate")) {
+                } else if (currentCursorType.equals("Candle") || currentCursorType.equals("ChocolateBar") || currentCursorType.equals("Strawberries")) {
                     Topping topping = new Topping(clickPoint.x, clickPoint.y, currentCursorType);
                     toppings.add(topping);
                 }
@@ -537,6 +539,17 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
 
     @Override
     public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        mouseMoved(e);
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        cursorPosition = e.getPoint();
+        repaint();
     }
 
     private void clear() {
@@ -584,7 +597,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             customCursorImage = ImageIO.read(new File("src/" + path));
             cursorOffsetX = x;
             cursorOffsetY = y;
-            showCustomCursor = true;
         } catch (IOException e) {
             showCustomCursor = false;
             setCursor(defaultCursor);
@@ -609,14 +621,11 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         cakeChoice = null;
     }
 
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        mouseMoved(e);
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        cursorPosition = e.getPoint();
-        repaint();
+    private void toggleCursor(String str) {
+        if (showCustomCursor && currentCursorType.equals(str)) {
+            showCustomCursor = false;
+        } else {
+            showCustomCursor = true;
+        }
     }
 }
