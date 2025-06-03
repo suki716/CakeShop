@@ -10,7 +10,7 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Toolkit;
 
-public class DisplayPanel extends JPanel implements ActionListener, MouseListener {
+public class DisplayPanel extends JPanel implements ActionListener, MouseListener, MouseMotionListener {
     //dialogue options
     private JButton next;
     private JButton cancel;
@@ -96,6 +96,13 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private Cursor customCursor;
     private boolean isCustomCursor = false;
     private String currCustom;
+
+    private BufferedImage customCursorImage;
+    private Point cursorPosition = new Point(0, 0);
+    private boolean showCustomCursor = false;
+    private String currentCursorType;
+    private int cursorOffsetX = 0;
+    private int cursorOffsetY = 0;
 
     //frosting
     private ArrayList<Dallop> dallops = new ArrayList<>();
@@ -255,6 +262,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
 
         //custom cursor
         defaultCursor = this.getCursor();
+        addMouseMotionListener(this);
     }
 
     public void paintComponent(Graphics g) {
@@ -394,6 +402,13 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 g.drawImage(topping.getImage(), topping.getxCoord(), topping.getyCoord(), null);
             }
         }
+
+        //drawing cursor
+        if (showCustomCursor && customCursorImage != null) {
+            int x = cursorPosition.x - cursorOffsetX;
+            int y = cursorPosition.y - cursorOffsetY;
+            g.drawImage(customCursorImage, x, y, customCursorImage.getWidth(), customCursorImage.getHeight(), null);
+        }
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -445,8 +460,8 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 frostingFlavor = "Chocolate";
             }
             if (casted != nextFrame) {
-                loadCustomCursor("Frosting/" + frostingFlavor + "Piping.png", 0, 185, frostingFlavor);
-                toggleCursor();
+                currentCursorType = frostingFlavor;
+                loadCustomCursor("Frosting/" + frostingFlavor + "Piping.png", 0, 185);
             }
             if (casted == nextFrame && this.getCursor() == defaultCursor) {
                 currScreen = "topping";
@@ -464,8 +479,8 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 toppingChoice = "Chocolate";
             }
             if (casted != nextFrame) {
-                loadCustomCursor("Toppings/" + toppingChoice + "Topping.png", 355, 217, toppingChoice);
-                toggleCursor();
+                currentCursorType = toppingChoice;
+                loadCustomCursor("Toppings/" + toppingChoice + "Topping.png", 355, 217);
             }
             if (casted == nextFrame && this.getCursor() == defaultCursor) {
                 currScreen = "stats";
@@ -491,18 +506,17 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1 && this.getCursor() == customCursor) { // left mouse click
-            Point mouseClickLocation = e.getPoint();
-            if (isPointInValidArea(mouseClickLocation.x, mouseClickLocation.y)) {
-                if (frostingFlavor != null) {
-                    Dallop dallop = new Dallop(mouseClickLocation.x, mouseClickLocation.y, frostingFlavor);
+        if (e.getButton() == MouseEvent.BUTTON1 && showCustomCursor && currentCursorType != null) {
+            Point clickPoint = new Point(cursorPosition.x - cursorOffsetX, cursorPosition.y - cursorOffsetY);
+            if (isPointInValidArea(clickPoint.x, clickPoint.y)) {
+                if (currentCursorType.equals("Vanilla") || currentCursorType.equals("Strawberry") || currentCursorType.equals("Chocolate")) {
+                    Dallop dallop = new Dallop(clickPoint.x, clickPoint.y, currentCursorType);
                     dallops.add(dallop);
-                }
-                if (toppingChoice != null) {
-                    Topping topping = new Topping(mouseClickLocation.x, mouseClickLocation.y, toppingChoice);
+                } else if (currentCursorType.equals("Candle") || currentCursorType.equals("Strawberry") || currentCursorType.equals("Chocolate")) {
+                    Topping topping = new Topping(clickPoint.x, clickPoint.y, currentCursorType);
                     toppings.add(topping);
                 }
-
+                repaint();
             }
         }
     }
@@ -563,33 +577,15 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         return null;
     }
 
-    private void loadCustomCursor(String path, int hotspotX, int hotspotY, String obj) {
+    private void loadCustomCursor(String path, int x, int y) {
         try {
-            BufferedImage cursorImg = ImageIO.read(new File("src/" + path));
-            Dimension bestSize = Toolkit.getDefaultToolkit().getBestCursorSize(cursorImg.getWidth(), cursorImg.getHeight());
-            if (bestSize.width != cursorImg.getWidth() || bestSize.height != cursorImg.getHeight()) {
-                BufferedImage compatibleImg = new BufferedImage(bestSize.width, bestSize.height, BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g2d = compatibleImg.createGraphics();
-                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-                g2d.drawImage(cursorImg, 0, 0, bestSize.width, bestSize.height, null);
-                g2d.dispose();
-                cursorImg = compatibleImg;
-            }
-            customCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(hotspotX, hotspotY), "custom");
-            currCustom = obj;
+            customCursorImage = ImageIO.read(new File("src/" + path));
+            cursorOffsetX = x;
+            cursorOffsetY = y;
+            showCustomCursor = true;
         } catch (IOException e) {
-            customCursor = defaultCursor;
-        }
-    }
-
-    private void toggleCursor() {
-        if (customCursor != null) {
-            if (isCustomCursor) {
-                this.setCursor(defaultCursor);
-            } else {
-                this.setCursor(customCursor);
-            }
-            isCustomCursor = !isCustomCursor;
+            showCustomCursor = false;
+            setCursor(defaultCursor);
         }
     }
 
@@ -609,5 +605,16 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         frost = false;
         nextLayer = false;
         cakeChoice = null;
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        mouseMoved(e);
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        cursorPosition = e.getPoint();
+        repaint();
     }
 }
