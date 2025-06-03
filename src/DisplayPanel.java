@@ -382,9 +382,11 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 g.drawImage(spinningAnimation.getActiveFrame(), 0, 0, null);
                 if (spinningAnimation.getEnd()) {
                     spun = false;
-                    int idx = (int) (Math.random() * 6) + 1;
-                    bgSpin = loadImage("Spinning/Choice" + idx + ".png");
+                    bgSpin = loadImage("Spinning/" + cakeShop.spinWheel().getName() +".png");
                     spinningAnimation = new SpinningAnimation();
+//                    int idx = (int) (Math.random() * 6) + 1;
+//                    bgSpin = loadImage("Spinning/Choice" + idx + ".png");
+//                    spinningAnimation = new SpinningAnimation();
                 }
             }
         }

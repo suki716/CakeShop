@@ -8,8 +8,8 @@ public class CakeShop {
         CakeHelper.initializeLists();
     }
 
-    public void spinWheel(){
-        CakeHelper.addRandomIngredient();
+    public Ingredient spinWheel(){
+        return CakeHelper.addRandomIngredient();
     }
 
     //increment cakeShop vars

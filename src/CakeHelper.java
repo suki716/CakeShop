@@ -55,7 +55,7 @@ class CakeHelper {
 
         //additional toppings
         newToppings = new ArrayList<>();
-        Ingredient cinnamon = new Ingredient("cinnamonStick", 1, true);
+        Ingredient cinnamon = new Ingredient("cinnamon", 1, true);
         Ingredient leaf = new Ingredient("leaf",1, true);
         newToppings.add(cinnamon);
         newToppings.add(leaf);
@@ -83,6 +83,7 @@ class CakeHelper {
                 valid = true;
             }
         }
+        System.out.println("added" + random.getName());
         return random;
     }
 
