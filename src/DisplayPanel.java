@@ -81,6 +81,8 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private Cake userCake;
     private WalkingAnimation walk;
     private Timer timer;
+    private int rating;
+    private int profit;
 
     //layers
     private BufferedImage cakeChoice;
@@ -135,6 +137,8 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         nextChosen = false;
         cancelChosen = false;
         userCake = new Cake();
+        rating = 0;
+        profit = 0;
         printCurrCakeInfo();
         //printing order info
 
@@ -403,10 +407,22 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             }
         } else if (currScreen.equals("stats")) {
             //show stats
+            BufferedImage stats = loadImage( "StatsScreen/StatsScreen0" + rating + ".png");
+            g.drawImage(stats,0,0,null);
+            g.drawImage(frostingAnimation.getActiveFrame(), 0, 0, null);
+            g.setColor(new Color(239,89,144));
+            g.setFont(new Font("Helvetica", Font.BOLD, 20));
+            g.drawString("Batter: " + currCake.getCorrectBat(), 55,270);
+            g.drawString("Layers: " + currCake.getCorrectLayer(), 55, 310);
+            g.drawString("Frosting: " + currCake.getCorrectFrost(), 55, 350);
+            g.drawString("Frosting Amount: " + currCake.getCorrectFrostAmt(),55, 390);
+            g.drawString("Topping: " + currCake.getCorrectTop(),55, 430);
+            g.drawString("Topping Amount: " + currCake.getCorrectTopAmt(),55, 470);
             spin.setVisible(true);
             spin.setLocation(10, 425);
         } else if (currScreen.equals("spin")) {
             //spin screen
+            resetCake();
             g.drawImage(bgSpin, 0, 0, null);
             spin.setVisible(true);
             spin.setLocation(815, 95);
@@ -543,8 +559,10 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             }
             if (casted == nextFrame && !showCustomCursor) {
                 currScreen = "stats";
-                userCake.calculateRating();
-                resetCake();
+                rating = userCake.calculateRating();
+                profit = userCake.calculateProfit();
+                //leave for later
+                //resetCake();
             }
         } else if (currScreen.equals("stats") && casted == nextFrame) {
             currScreen = "order";
@@ -685,6 +703,8 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         order2 = currCake.getCorrectBat() + " cake with " + currCake.getCorrectFrostAmt();
         order3 = currCake.getCorrectFrost() + " frosting dollops.";
         order4 = "Oh, and please add " + currCake.getCorrectTopAmt() + " " + currCake.getCorrectTop() + "!";
+        rating = 0;
+        profit = 0;
         printCurrCakeInfo();
     }
 

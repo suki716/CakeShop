@@ -14,6 +14,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/Spinning" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/LemonBatter" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/MatchaBatter" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/StatsScreen" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

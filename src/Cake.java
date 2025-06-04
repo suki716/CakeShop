@@ -27,7 +27,12 @@ public class Cake { //comparing correctness
     }
 
     public Cake() {
+        batter = "";
         layer = 1;
+        frosting = "";
+        frostingAmt = 0;
+        topping = "";
+        toppingAmt = 0;
     }
 
 
