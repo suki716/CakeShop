@@ -14,14 +14,12 @@ public class Day {
     }
 
     public Cake newCustomer() {
-        if (customerNum < 5){
-            initializeCake();
-            customerNum++;
-            stars = 0;
-            profit = 0;
-            return customer;
-        }
-        return null;
+        initializeCake();
+        customerNum++;
+        stars = 0;
+        profit = 0;
+        return customer;
+
     }
 
     public void initializeCake() {

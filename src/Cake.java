@@ -66,20 +66,26 @@ public class Cake { //comparing correctness
     }
 
     public void chooseBatter(String flavor) {
-        batter = flavor;
-        System.out.println(batter);
+
+            batter = flavor;
+
     }
 
     public void chooseFrosting(String flavor) {
-        frosting = flavor;
-        System.out.println(frosting);
+        if(flavor != null){
+            frosting = flavor;
+        }
     }
 
     public void addFrosting() {
         frostingAmt++;
     }
 
-    public void chooseTopping(String top) { topping = top; }
+    public void chooseTopping(String top) {
+        if (top != null) {
+            topping = top;
+        }
+    }
 
     public void addTopping() {
         toppingAmt++;
@@ -88,51 +94,39 @@ public class Cake { //comparing correctness
     public int calculateRating() {
         if (batter.equals(correctBat)){
             rating++;
-            System.out.println(batter);
-            System.out.println("correct Batter");
         }
 
         if (layer == correctLayer) {
             rating++;
-            System.out.println(layer);
-            System.out.println("correct layer");
         }
 
         if (frosting.equals(correctFrost)) {
             rating++;
-            System.out.println(frosting);
-            System.out.println("correct frosting");
         }
 
         if (frostingAmt == correctFrostAmt) {
             rating++;
-            System.out.println(frostingAmt);
-            System.out.println("correct frosting amt");
         }
 
         if (toppingAmt == correctTopAmt) {
             rating++;
-            System.out.println(toppingAmt);
-            System.out.println("correct topping amt");
         }
 
         if (topping.equals(correctTop)) {
             rating++;
-            System.out.println(topping);
-            System.out.println("correct topping");
         }
-        System.out.println(rating + " stars");
         return rating;
     }
 
     public int calculateProfit() {
-        int profit = rating * 4;
-        if (rating == 5) {
+        int profit = rating * 10;
+        if (rating >= 5) {
             profit += 5;
         }
-        if (rating <= 2) {
+        if (rating <= 3) {
             profit -= 5;
         }
+        System.out.println();
         return profit;
     }
 }
