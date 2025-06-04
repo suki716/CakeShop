@@ -12,6 +12,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src/StrawberryBatter" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Toppings" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/Spinning" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/LemonBatter" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/MatchaBatter" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

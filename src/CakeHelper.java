@@ -7,10 +7,6 @@ class CakeHelper {
     public static ArrayList<Ingredient> toppings;
 
     //additional
-    private static ArrayList<Ingredient> newBatters;
-    private static ArrayList<Ingredient> newFrosting;
-    private static ArrayList<Ingredient> newToppings;
-
     private static Ingredient lemonBatter = new Ingredient("lemon",1, true);
     private static Ingredient matchaBatter = new Ingredient("matcha",1, true);
 
@@ -48,60 +44,55 @@ class CakeHelper {
         toppings.add(candle);
         toppings.add(strawberries);
         toppings.add(chocolateBar);
-
-        //additional batters
-        //newBatters = new ArrayList<>();
-        //newBatters.add(lemonBatter);
-        //newBatters.add(matchaBatter);
-
-//        //additional frostings
-//        newFrosting = new ArrayList<>();
-//        newFrosting.add(peppermintFrost);
-//        newFrosting.add(peachFrost);
-//
-//        //additional toppings
-//        newToppings = new ArrayList<>();
-//        newToppings.add(cinnamon);
-//        newToppings.add(leaf);
     }
 
-    public static Ingredient addRandomIngredient(){
-        int randomCategory = (int) (Math.random() * 3);
-        boolean valid = false;
-        Ingredient random = new Ingredient("",0,false);
-        while (!valid && !isFull()) {
-            if (randomCategory == 0 && !isFull(batters)) {
-                if (batters.contains(lemonBatter) && !batters.contains(matchaBatter)) {
-                    batters.add(matchaBatter);
-                    random = matchaBatter;
-                } else {
-                    batters.add(lemonBatter);
-                    random = lemonBatter;
-                }
-                valid = true;
-            } else if (randomCategory == 1 && !isFull(frosting)) {
-                if (frosting.contains(peppermintFrost) && !frosting.contains(peachFrost)) {
-                    batters.add(peachFrost);
-                    random = peachFrost;
-                } else {
-                    frosting.add(peppermintFrost);
-                    random = peppermintFrost;
-                }
-                valid = true;
-            } else if (randomCategory == 2 && !isFull(toppings)) {
-                if (toppings.contains(cinnamon)  && !toppings.contains(leaf)) {
-                    toppings.add(leaf);
-                    random = leaf;
-                } else {
-                    toppings.add(cinnamon);
-                    random = cinnamon;
-                }
-                valid = true;
-            }
-            randomCategory = (int) (Math.random() * 3);
+    public static Ingredient addRandomIngredient() {
+        ArrayList<Integer> availableCategories = new ArrayList<>();
+        if (!isFull(batters)) {
+            availableCategories.add(0);
         }
-        System.out.println("added " + random.getName());
-        return random;
+        if (!isFull(frosting)) {
+            availableCategories.add(1);
+        }
+        if (!isFull(toppings)) {
+            availableCategories.add(2);
+        }
+        if (availableCategories.isEmpty()) {
+            return null;
+        }
+        int randomCategory = availableCategories.get((int) (Math.random() * availableCategories.size()));
+        Ingredient newIngredient = null;
+        if (randomCategory == 0) {
+            if (!batters.contains(lemonBatter)) {
+                newIngredient = lemonBatter;
+                batters.add(lemonBatter);
+            } else if (!batters.contains(matchaBatter)) {
+                newIngredient = matchaBatter;
+                batters.add(matchaBatter);
+            }
+        } else if (randomCategory == 1) {
+            if (!frosting.contains(peppermintFrost)) {
+                newIngredient = peppermintFrost;
+                frosting.add(peppermintFrost);
+            } else if (!frosting.contains(peachFrost)) {
+                newIngredient = peachFrost;
+                frosting.add(peachFrost);
+            }
+        } else if (randomCategory == 2) {
+            if (!toppings.contains(cinnamon)) {
+                newIngredient = cinnamon;
+                toppings.add(cinnamon);
+            } else if (!toppings.contains(leaf)) {
+                newIngredient = leaf;
+                toppings.add(leaf);
+            }
+        }
+        if (newIngredient != null) {
+            System.out.println("Added " + newIngredient.getName());
+        } else {
+            System.out.println("all added!");
+        }
+        return newIngredient;
     }
 
     public static Cake randomCake(){

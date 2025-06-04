@@ -36,8 +36,8 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private JButton strawberry;
     private JButton lemon; //locked
     private JButton matcha; //locked
-    private JButton cakeLayer; //hopes and dreams
-    private JButton frostingKnife; //hopes and dreams
+    private JButton cakeLayer;
+    private JButton frostingKnife;
 
     //frosting
     private JButton vanillaFrost;
@@ -64,13 +64,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private BufferedImage bgFrosting;
     private BufferedImage bgTopping;
 
-    //dollop image
-    private BufferedImage vanillaFrostImg;
-    private BufferedImage chocolateFrostImg;
-    private BufferedImage strawberryFrostImg;
-    private BufferedImage peppermintFrostImg;
-    private BufferedImage peachFrostImg;
-
     //cookie img
     private BufferedImage ordering;
 
@@ -81,10 +74,8 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private Cake userCake;
     private WalkingAnimation walk;
     private Timer timer;
-    private int x = 10;
 
     //layers
-    private int layers = 1;
     private BufferedImage cakeChoice;
     private boolean drawLayer = false;
     private FrostingAnimation frostingAnimation;
@@ -93,9 +84,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
 
     //custom cursor
     private Cursor defaultCursor;
-    private Cursor customCursor;
-    private boolean isCustomCursor = false;
-    private String currCustom;
 
     private BufferedImage customCursorImage;
     private Point cursorPosition = new Point(0, 0);
@@ -114,8 +102,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
 
     //user decisions
     private String batter;
-    private String frosting;
-    private String topping;
 
     //spinning
     private BufferedImage bgSpin = loadImage("Spinning/Spinning-00.png");
@@ -133,10 +119,12 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         currCake = currDay.newCustomer();
         userCake = new Cake();
         printCurrCakeInfo();
+        //printing order info
         order1 = "Hello! I want a " + currCake.getCorrectLayer() + "-layered ";
         order2 = currCake.getCorrectBat() + " cake with " + currCake.getCorrectFrostAmt();
         order3 = currCake.getCorrectFrost() + " frosting dollops.";
         order4 = "Oh, and please add " + currCake.getCorrectTopAmt() + " " + currCake.getCorrectTop() + "!";
+
         currScreen = "start";
         addMouseListener(this);
         //dialogue options
@@ -182,11 +170,11 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         strawberry.addActionListener(this);
         add(strawberry);
 
-        lemon = new JButton("lemon");
+        lemon = new CircleButton("lemon", 170);
         lemon.addActionListener(this);
         add(lemon);
 
-        matcha = new JButton("matcha");
+        matcha = new CircleButton("matcha", 170);
         matcha.addActionListener(this);
         add(matcha);
 
@@ -212,12 +200,12 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         add(strawberryFrost);
 
         peppermintFrost = new TriangleButton("peppermintFrost",75,185);
-        //peppermintFrost.addActionListener(this);
-        //add(peppermintFrost);
+        peppermintFrost.addActionListener(this);
+        add(peppermintFrost);
 
         peachFrost = new TriangleButton("peachFrost", 75,185);
-        //peachFrost.addActionListener(this);
-        //add(peachFrost);
+        peachFrost.addActionListener(this);
+        add(peachFrost);
 
         //toppings
         candles = new CircleButton("candles",100);
@@ -232,13 +220,13 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         chocolateBar.addActionListener(this);
         add(chocolateBar);
 
-        cinnamonStick = new JButton("cinnamonStick");
+        cinnamonStick = new CircleButton("cinnamonStick", 100);
         cinnamonStick.addActionListener(this);
-//        add(cinnamonStick);
+        add(cinnamonStick);
 
-        leaves = new JButton("leaves");
+        leaves = new CircleButton("leaves", 100);
         leaves.addActionListener(this);
-//        add(leaves);
+        add(leaves);
 
         //images
         bgCounter = loadImage("Imgs/bgCounter.png");
@@ -314,10 +302,14 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             chocolate.setLocation(390, 172);
             strawberry.setVisible(true);
             strawberry.setLocation(665, 172);
-//            lemon.setVisible(true);
-//            lemon.setLocation(350, 200);
-//            matcha.setVisible(true);
-//            matcha.setLocation(450, 200);
+            if (CakeHelper.batters.size() >= 4) {
+                lemon.setVisible(true);
+                lemon.setLocation(255, 340);
+            }
+            if (CakeHelper.batters.size() == 5) {
+                matcha.setVisible(true);
+                matcha.setLocation(525, 340);
+            }
         } else if (currScreen.equals("layer")) {
             //different backgrounds depending on batter option
             if (batter != null) {
@@ -353,23 +345,32 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             chocolateFrost.setLocation(108, 270);
             strawberryFrost.setVisible(true);
             strawberryFrost.setLocation(682, 270);
-            //Image image = toolkit.getImage("src/Frosting/VanillaPiping.png");
-            //Cursor customCursor = toolkit.createCustomCursor(image , new Point(0, 8), "img");
-            //this.setCursor(customCursor);
+            if (CakeHelper.frosting.size() >= 4) {
+                peppermintFrost.setVisible(true);
+                peppermintFrost.setLocation(790, 270);
+            }
+            if (CakeHelper.frosting.size() == 5) {
+                peachFrost.setVisible(true);
+                peachFrost.setLocation(18,270);
+            }
         } else if (currScreen.equals("topping")) {
             //add toppings
             g.drawImage(bgTopping, 0,0,null);
             g.drawImage(frostingAnimation.getActiveFrame(), 0, 0, null);
             candles.setVisible(true);
-            candles.setLocation(172, 200);
+            candles.setLocation(170, 198);
             strawberries.setVisible(true);
             strawberries.setLocation(690, 200);
             chocolateBar.setVisible(true);
-            chocolateBar.setLocation(172, 340);
-//            cinnamonStick.setVisible(true);
-//            cinnamonStick.setLocation(500, 100);
-//            leaves.setVisible(true);
-//            leaves.setLocation(600, 100);
+            chocolateBar.setLocation(170, 337);
+            if (CakeHelper.frosting.size() >= 4) {
+                cinnamonStick.setVisible(true);
+                cinnamonStick.setLocation(690, 337);
+            }
+            if (CakeHelper.frosting.size() >= 4) {
+                leaves.setVisible(true);
+                leaves.setLocation(42, 268);
+            }
         } else if (currScreen.equals("stats")) {
             //show stats
             spin.setVisible(true);
@@ -385,9 +386,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                     spun = false;
                     bgSpin = loadImage("Spinning/" + cakeShop.spinWheel().getName() +".png");
                     spinningAnimation = new SpinningAnimation();
-//                    int idx = (int) (Math.random() * 6) + 1;
-//                    bgSpin = loadImage("Spinning/Choice" + idx + ".png");
-//                    spinningAnimation = new SpinningAnimation();
                 }
             }
         }
@@ -416,6 +414,9 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
 
     public void actionPerformed(ActionEvent e) {
         JButton casted = (JButton) e.getSource();
+        if (casted == exit) {
+            System.exit(0); //closes window
+        }
         if (currScreen.equals("start") && casted == start) {
             currScreen = "order";
             walk.start();
@@ -431,6 +432,12 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             } else if (casted == chocolate) {
                 userCake.chooseBatter("chocolate");
                 batter = "Chocolate";
+            } else if (casted == lemon) {
+                userCake.chooseBatter("lemon");
+                batter = "Lemon";
+            } else if (casted == matcha) {
+                userCake.chooseBatter("matcha");
+                batter = "Matcha";
             }
             if (batter != null) {
                 currScreen = "layer";
@@ -464,6 +471,10 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             } else if (casted == chocolateFrost) {
 //                userCake.chooseFrosting("chocolate");
                 frostingFlavor = "Chocolate";
+            } else if (casted == peppermintFrost) {
+                frostingFlavor = "Peppermint";
+            } else if (casted == peachFrost) {
+                frostingFlavor = "Peach";
             }
             if (casted != nextFrame) {
                 toggleCursor(frostingFlavor);
@@ -484,6 +495,12 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             } else if (casted == chocolateBar) {
                 userCake.chooseTopping("chocolate bars");
                 toppingChoice = "ChocolateBar";
+            } else if (casted == cinnamonStick) {
+                userCake.chooseTopping("cinnamon");
+                toppingChoice = "Cinnamon";
+            } else if (casted == leaves) {
+                userCake.chooseTopping("leaves");
+                toppingChoice = "Leaf";
             }
             if (casted != nextFrame) {
                 toggleCursor(toppingChoice);
@@ -668,7 +685,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         }
     }
 
-    //helper
     private void printCurrCakeInfo(){
         System.out.println("Layer: " + currCake.getCorrectLayer());
         System.out.println("Batter: " + currCake.getCorrectBat());
