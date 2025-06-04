@@ -96,7 +96,7 @@ public class Cake { //comparing correctness
         if (frosting.equals(correctFrost)) {
             rating++;
             System.out.println(frosting);
-            System.out.println("correct frsoting");
+            System.out.println("correct frosting");
         }
 
         if (frostingAmt == correctFrostAmt) {

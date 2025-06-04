@@ -60,6 +60,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private JButton leaves; //locked
 
     //images
+    private BufferedImage homeScreen;
     private BufferedImage startingScreen;
     private BufferedImage bgMaking;
     private BufferedImage bgCounter;
@@ -241,6 +242,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         add(leaves);
 
         //images
+        homeScreen = loadImage("Imgs/HomeScreen.png");
         bgCounter = loadImage("Imgs/bgCounter.png");
         counter = loadImage("Imgs/Counter.png");
         walk = new WalkingAnimation();
@@ -280,8 +282,16 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         //individual stations
         if (currScreen.equals("start")) {
             g.drawImage(bgCounter, 0, 0, null);
+            g.drawImage(homeScreen, 0, 0, null);
+            Dimension size = getPreferredSize();
+            size.width = 300;
+            size.height = 80;
+            start.setOpaque(false);
+            start.setContentAreaFilled(false);
+            start.setBorderPainted(false);
+            start.setPreferredSize(size);
             start.setVisible(true);
-            start.setLocation(400, 200);
+            start.setLocation(100, 320);
         } else if (currScreen.equals("order")) {
             //background
             g.drawImage(bgCounter, 0, 0, null);
