@@ -150,7 +150,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         add(cancel);
 
         //play options
-        start = new JButton("Start");
+        start = new JButton("");
         start.addActionListener(this);
         add(start);
 
