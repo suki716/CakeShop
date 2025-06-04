@@ -1,4 +1,7 @@
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -140,8 +143,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         rating = 0;
         profit = 0;
         printCurrCakeInfo();
-        //printing order info
-
         currScreen = "start";
         addMouseListener(this);
         //dialogue options
@@ -270,6 +271,8 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         defaultCursor = this.getCursor();
         addMouseMotionListener(this);
 
+        //music
+        playMusic();
     }
 
     public void paintComponent(Graphics g) {
@@ -277,11 +280,9 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         clear();
         changeImg();
         //constant buttons
-        exit.setVisible(true);
-        exit.setLocation(10, 10);
+        setInvisible(exit, 10, 10);
         if (!currScreen.equals("order") && !currScreen.equals("start") && !currScreen.equals("batter")) {
-            nextFrame.setVisible(true);
-            nextFrame.setLocation(900, 480);
+            setInvisible(nextFrame, 900, 480);
         }
         //individual stations
         if (currScreen.equals("start")) {
@@ -290,12 +291,8 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             Dimension size = getPreferredSize();
             size.width = 300;
             size.height = 80;
-            start.setOpaque(false);
-            start.setContentAreaFilled(false);
-            start.setBorderPainted(false);
             start.setPreferredSize(size);
-            start.setVisible(true);
-            start.setLocation(100, 320);
+            setInvisible(start, 100, 320);
         } else if (currScreen.equals("order")) {
             //background
             g.drawImage(bgCounter, 0, 0, null);
@@ -397,11 +394,11 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             strawberries.setLocation(690, 200);
             chocolateBar.setVisible(true);
             chocolateBar.setLocation(170, 337);
-            if (CakeHelper.frosting.size() >= 4) {
+            if (CakeHelper.toppings.size() >= 4) {
                 cinnamonStick.setVisible(true);
                 cinnamonStick.setLocation(690, 337);
             }
-            if (CakeHelper.frosting.size() >= 4) {
+            if (CakeHelper.toppings.size() >= 4) {
                 leaves.setVisible(true);
                 leaves.setLocation(42, 268);
             }
@@ -422,7 +419,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             spin.setLocation(10, 425);
         } else if (currScreen.equals("spin")) {
             //spin screen
-            resetCake();
             g.drawImage(bgSpin, 0, 0, null);
             spin.setVisible(true);
             spin.setLocation(815, 95);
@@ -513,13 +509,10 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             drawLayer = false;
         } else if (currScreen.equals("frosting")){
             if (casted == vanillaFrost) {
-//                userCake.chooseFrosting("vanilla");
                 frostingFlavor = "Vanilla";
             } else if (casted == strawberryFrost) {
-//                userCake.chooseFrosting("strawberry");
                 frostingFlavor = "Strawberry";
             } else if (casted == chocolateFrost) {
-//                userCake.chooseFrosting("chocolate");
                 frostingFlavor = "Chocolate";
             } else if (casted == peppermintFrost) {
                 frostingFlavor = "Peppermint";
@@ -555,20 +548,26 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             if (casted != nextFrame) {
                 toggleCursor(toppingChoice);
                 currentCursorType = toppingChoice;
-                loadCustomCursor("Toppings/" + toppingChoice + "Topping.png", 470, 265);
+                if (toppingChoice.equals("Cinnamon")) {
+                    loadCustomCursor("Toppings/" + toppingChoice + "Topping.png", 487, 265);
+                } else if (toppingChoice.equals("Leaf")) {
+                    loadCustomCursor("Toppings/" + toppingChoice + "Topping.png", 470, 300);
+                } else {
+                    loadCustomCursor("Toppings/" + toppingChoice + "Topping.png", 470, 265);
+                }
             }
             if (casted == nextFrame && !showCustomCursor) {
                 currScreen = "stats";
                 rating = userCake.calculateRating();
                 profit = userCake.calculateProfit();
-                //leave for later
-                //resetCake();
             }
         } else if (currScreen.equals("stats") && casted == nextFrame) {
             currScreen = "order";
             walk.start(true);
+            resetCake();
         } else if (currScreen.equals("stats") && casted == spin) {
             currScreen = "spin";
+            resetCake();
         } else if (currScreen.equals("spin")) {
             if (casted == nextFrame) {
                 currScreen = "order";
@@ -588,12 +587,12 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         if (e.getButton() == MouseEvent.BUTTON1 && showCustomCursor && currentCursorType != null) {
             Point clickPoint = new Point(cursorPosition.x, cursorPosition.y);
             if (isPointInValidArea(clickPoint.x, clickPoint.y)) {
-                if (currentCursorType.equals("Vanilla") || currentCursorType.equals("Strawberry") || currentCursorType.equals("Chocolate")) {
+                if (currentCursorType.equals("Vanilla") || currentCursorType.equals("Strawberry") || currentCursorType.equals("Chocolate") || currentCursorType.equals("Peppermint") || currentCursorType.equals("Peach")) {
                     Dallop dallop = new Dallop(clickPoint.x, clickPoint.y, currentCursorType);
                     dallops.add(dallop);
                     userCake.chooseFrosting(currentCursorType.toLowerCase());
                     userCake.addFrosting();
-                } else if (currentCursorType.equals("Candle") || currentCursorType.equals("ChocolateBar") || currentCursorType.equals("Strawberries")) {
+                } else if (currentCursorType.equals("Candle") || currentCursorType.equals("ChocolateBar") || currentCursorType.equals("Strawberries") || currentCursorType.equals("Cinnamon") || currentCursorType.equals("Leaf")) {
                     Topping topping = new Topping(clickPoint.x, clickPoint.y, currentCursorType);
                     toppings.add(topping);
                     userCake.addTopping();
@@ -751,4 +750,26 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         System.out.println("Topping: " + currCake.getCorrectTop());
         System.out.println("Topping Amt: " + currCake.getCorrectTopAmt());
     }
+
+    private void setInvisible(JButton button, int x, int y) {
+        button.setOpaque(false);
+        button.setContentAreaFilled(false);
+        button.setBorderPainted(false);
+        button.setVisible(true);
+        button.setLocation(x, y);
+    }
+
+    private void playMusic() {
+        File audioFile = new File("src/music.wav");
+        try {
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
+            clip.start();
+            clip.loop(Clip.LOOP_CONTINUOUSLY); // repeats song
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
 }

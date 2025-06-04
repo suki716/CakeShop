@@ -11,6 +11,13 @@ public class Topping {
     public Topping(int x, int y, String topping) {
         xCoord = x - 473;
         yCoord = y - 255;
+        if (topping.equals("Leaf")) {
+            yCoord -= 48;
+        }
+        if (topping.equals("Cinnamon")) {
+            yCoord -= 5;
+            xCoord -= 15;
+        }
         try {
             image = ImageIO.read(new File("src/Toppings/" + topping + "Topping.png"));
         } catch (IOException e) {
