@@ -116,7 +116,7 @@ public class Cake { //comparing correctness
             System.out.println(topping);
             System.out.println("correct topping");
         }
-        System.out.println(rating);
+        System.out.println(rating + " stars");
         return rating;
     }
 

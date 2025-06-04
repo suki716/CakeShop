@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.awt.Cursor;
 import java.awt.Point;
+import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 
 public class DisplayPanel extends JPanel implements ActionListener, MouseListener, MouseMotionListener {
@@ -18,6 +19,11 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private String order2;
     private String order3;
     private String order4;
+    private String nextStr;
+    private String cancelStr1;
+    private String cancelStr2;
+    private boolean nextChosen;
+    private boolean cancelChosen;
     private String currScreen;
     //play options
     private JButton start;
@@ -112,18 +118,24 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     //limiting placement of toppings
     private BufferedImage cakeMask;
 
+
     public DisplayPanel(JFrame frame) {
         //logic
         cakeShop = new CakeShop();
         currDay = new Day();
         currCake = currDay.newCustomer();
-        userCake = new Cake();
-        printCurrCakeInfo();
-        //printing order info
         order1 = "Hello! I want a " + currCake.getCorrectLayer() + "-layered ";
         order2 = currCake.getCorrectBat() + " cake with " + currCake.getCorrectFrostAmt();
         order3 = currCake.getCorrectFrost() + " frosting dollops.";
         order4 = "Oh, and please add " + currCake.getCorrectTopAmt() + " " + currCake.getCorrectTop() + "!";
+        nextStr = "Thank you so much!";
+        cancelStr1 = "Nope! Not a chance!";
+        cancelStr2 = "You're making my cake. Or else.";
+        nextChosen = false;
+        cancelChosen = false;
+        userCake = new Cake();
+        printCurrCakeInfo();
+        //printing order info
 
         currScreen = "start";
         addMouseListener(this);
@@ -251,6 +263,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         //custom cursor
         defaultCursor = this.getCursor();
         addMouseMotionListener(this);
+
     }
 
     public void paintComponent(Graphics g) {
@@ -279,13 +292,20 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 walk.stop();
                 g.drawImage(ordering, 300, 100, null);
                 g.drawImage(textBubble, 0, 0, null);
-                g.setFont(new Font("Helvetica ", Font.BOLD, 20));
-                g.setColor(Color.BLACK);
-                g.drawString(order1, 275, 75);
-                g.drawString(order2, 275, 95);
-                g.drawString(order3, 275, 115);
-                g.drawString(order4, 275, 135);
-                g.drawString("Thank You!", 275, 155);
+                g.setFont(new Font("Helvetica", Font.BOLD, 20));
+                g.setColor(new Color(239,89,144));
+
+                if (nextChosen){
+                    g.drawString(nextStr, 275, 112);
+                } else if (cancelChosen) {
+                    g.drawString(cancelStr1, 275,100);
+                    g.drawString(cancelStr2,275,125);
+                } else {
+                    g.drawString(order1, 275, 75);
+                    g.drawString(order2, 275, 100);
+                    g.drawString(order3, 275, 125);
+                    g.drawString(order4, 275, 150);
+                }
                 next.setVisible(true);
                 next.setLocation(550, 45);
                 cancel.setVisible(true);
@@ -420,8 +440,12 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         if (currScreen.equals("start") && casted == start) {
             currScreen = "order";
             walk.start();
-        } else if (currScreen.equals("order") && casted == next) {
+        } else if (currScreen.equals("order") && casted == cancel){
+            cancelChosen = true;
+        } else if (currScreen.equals("order") && casted == next && nextChosen) {
             currScreen = "batter";
+        } else if (currScreen.equals("order") && casted == next){
+            nextChosen = true;
         } else if (currScreen.equals("batter")) {
             if (casted == vanilla) {
                 userCake.chooseBatter("vanilla");
@@ -647,6 +671,10 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         nextLayer = false;
         cakeChoice = null;
         currCake = currDay.newCustomer();
+        order1 = "Hello! I want a " + currCake.getCorrectLayer() + "-layered ";
+        order2 = currCake.getCorrectBat() + " cake with " + currCake.getCorrectFrostAmt();
+        order3 = currCake.getCorrectFrost() + " frosting dollops.";
+        order4 = "Oh, and please add " + currCake.getCorrectTopAmt() + " " + currCake.getCorrectTop() + "!";
         printCurrCakeInfo();
     }
 
