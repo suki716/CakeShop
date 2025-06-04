@@ -13,16 +13,20 @@ public class CakeShop {
     }
 
     //increment cakeShop vars
-    public void addMoney(Day day){
-        totalMoney += day.getProfit();
+    public void addMoney(int profit){
+        totalMoney += profit;
     }
 
-    public void addStars(Day day){
-        totalStars += day.getStars();
+    public void addStars(int stars){
+        totalStars += stars;
     }
 
     public void addCustomer(){
         customerNum++;
+    }
+
+    public void spin(){
+        totalMoney -= 100;
     }
 
     //get stats
@@ -36,14 +40,6 @@ public class CakeShop {
 
     public int getTotalStars(){
         return totalStars;
-    }
-
-    public int getDayNum(){
-        return dayNum;
-    }
-
-    public double getAccuracy(){
-        return ((double) totalStars / (customerNum * 6)) * 100;
     }
 
     public double avgRating(){

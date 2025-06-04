@@ -37,7 +37,7 @@ public class WalkingAnimation implements ActionListener {
         }
         this.frames = images;
         currentFrame = 0;
-        timer = new Timer(25, this);
+        timer = new Timer(10, this);
     }
 
     public BufferedImage getActiveFrame() {
