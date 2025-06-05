@@ -42,7 +42,4 @@ public class CakeShop {
         return totalStars;
     }
 
-    public double avgRating(){
-        return (double) totalStars / customerNum;
-    }
 }

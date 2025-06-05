@@ -1,5 +1,4 @@
 public class Cake { //comparing correctness
-    private final int MAX_LAYERS = 4;
     private int rating = 0;
     //correct recipe
     public static String correctBat;
@@ -59,6 +58,30 @@ public class Cake { //comparing correctness
 
     public int getCorrectTopAmt(){
         return correctTopAmt;
+    }
+
+    public String getBatter(){
+        return batter;
+    }
+
+    public int getLayer(){
+        return layer;
+    }
+
+    public String getFrosting(){
+        return frosting;
+    }
+
+    public int getFrostingAmt(){
+        return frostingAmt;
+    }
+
+    public String getTopping(){
+        return topping;
+    }
+
+    public int getToppingAmt(){
+        return toppingAmt;
     }
 
     public void addLayer() {

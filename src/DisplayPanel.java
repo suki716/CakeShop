@@ -31,8 +31,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     //play options
     private JButton start;
     private JButton nextFrame;
-    private JButton back; //in case we can do it
-    private JButton clear; //trashcan
+    private JButton back; //in case we can do it//trashcan
     private JButton exit;
     private JButton finish;
     private JButton spin;
@@ -70,9 +69,11 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private BufferedImage endScreen;
     private BufferedImage counter;
     private BufferedImage textBubble;
+    private BufferedImage textBubble2;
     private BufferedImage bgBatter;
     private BufferedImage bgFrosting;
     private BufferedImage bgTopping;
+    private BufferedImage stats;
 
     //cookie img
     private BufferedImage ordering;
@@ -130,6 +131,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         cakeShop = new CakeShop();
         currDay = new Day();
         currCake = currDay.newCustomer();
+        cakeShop.addCustomer();
         order1 = "Hello! I want a " + currCake.getCorrectLayer() + "-layered ";
         order2 = currCake.getCorrectBat() + " cake with " + currCake.getCorrectFrostAmt();
         order3 = currCake.getCorrectFrost() + " frosting dollops.";
@@ -146,11 +148,11 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         currScreen = "start";
         addMouseListener(this);
         //dialogue options
-        next = new JButton("Next");
+        next = new JButton("          ");
         next.addActionListener(this);
         add(next);
 
-        cancel = new JButton("Cancel");
+        cancel = new JButton("          ");
         cancel.addActionListener(this);
         add(cancel);
 
@@ -162,10 +164,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         nextFrame = new CircleButton("NextFrame",  50);
         nextFrame.addActionListener(this);
         add(nextFrame);
-
-        clear = new JButton("Clear");
-        clear.addActionListener(this);
-        add(clear);
 
         exit = new CircleButton("Exit", 50);
         exit.addActionListener(this);
@@ -253,9 +251,11 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         walk = new WalkingAnimation();
         ordering = loadImage("Imgs/Ordering.png");
         textBubble = loadImage("Imgs/TextBubble.png");
+        textBubble2 = loadImage("Imgs/TextBubble2.png");
         bgBatter = loadImage("Imgs/bgBatter.png");
         bgFrosting = loadImage("Imgs/bgFrosting.png");
         bgTopping = loadImage("Imgs/bgTopping.png");
+        stats = loadImage("Imgs/StatDisplay.png");
 
         //animation
         timer = new Timer(30, new ActionListener() {
@@ -296,32 +296,41 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         } else if (currScreen.equals("order")) {
             //background
             g.drawImage(bgCounter, 0, 0, null);
-            cakeShop.addCustomer();
+            g.drawImage(stats, 0,0,null);
+            g.setFont(new Font("Helvetica", Font.PLAIN, 18));
+            g.setColor(new Color(239,89,144));
+            g.drawString("" + cakeShop.getCustomerNum(), 270, 22);
+            g.drawString("" + cakeShop.getTotalMoney(), 720, 22);
+            g.drawString("" + cakeShop.getTotalStars(), 860, 22);
             //animation
             if (walk.getX() < 400) {
                 g.drawImage(walk.getActiveFrame(), walk.getX(), 200, walk.getActiveFrame().getWidth(), walk.getActiveFrame().getHeight(), null);
             } else {
                 walk.stop();
+
                 g.drawImage(ordering, 300, 100, null);
-                g.drawImage(textBubble, 0, 0, null);
+
                 g.setFont(new Font("Helvetica", Font.BOLD, 20));
-                g.setColor(new Color(239,89,144));
 
                 if (nextChosen){
+                    g.drawImage(textBubble2, 0, 0, null);
                     g.drawString(nextStr, 275, 112);
                 } else if (cancelChosen) {
+                    g.drawImage(textBubble2, 0, 0, null);
                     g.drawString(cancelStr1, 275,100);
                     g.drawString(cancelStr2,275,125);
                 } else {
+                    g.drawImage(textBubble, 0, 0, null);
                     g.drawString(order1, 275, 75);
                     g.drawString(order2, 275, 100);
                     g.drawString(order3, 275, 125);
                     g.drawString(order4, 275, 150);
                     cancel.setVisible(true);
-                    cancel.setLocation(550, 75);
+                    cancel.setLocation(546, 90);
                 }
                 next.setVisible(true);
-                next.setLocation(550, 45);
+                next.setLocation(546, 55);
+
             }
             g.drawImage(counter, 0, 0, null);
         } else if (currScreen.equals("batter")) {
@@ -419,12 +428,12 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             g.drawString("Topping: " + currCake.getCorrectTop(),55, 430);
             g.drawString("Topping Amount: " + currCake.getCorrectTopAmt(),55, 470);
 
-            g.drawString("Batter: " + userCake.getCorrectBat(), 700,270);
-            g.drawString("Layers: " + userCake.getCorrectLayer(), 700, 310);
-            g.drawString("Frosting: " + userCake.getCorrectFrost(), 700, 350);
-            g.drawString("Frosting Amount: " + userCake.getCorrectFrostAmt(),700, 390);
-            g.drawString("Topping: " + userCake.getCorrectTop(),700, 430);
-            g.drawString("Topping Amount: " + userCake.getCorrectTopAmt(),700, 470);
+            g.drawString("Batter: " + userCake.getBatter(), 690,270);
+            g.drawString("Layers: " + userCake.getCorrectLayer(), 690, 310);
+            g.drawString("Frosting: " + userCake.getCorrectFrost(), 690, 350);
+            g.drawString("Frosting Amount: " + userCake.getCorrectFrostAmt(),690, 390);
+            g.drawString("Topping: " + userCake.getCorrectTop(),690, 430);
+            g.drawString("Topping Amount: " + userCake.getCorrectTopAmt(),690, 470);
 
             g.setColor(Color.black);
             g.drawString("$"+ profit,486,515);
@@ -658,7 +667,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         next.setVisible(false);
         cancel.setVisible(false);
         nextFrame.setVisible(false);
-        clear.setVisible(false);
         exit.setVisible(false);
         spin.setVisible(false);
         //batter
@@ -728,7 +736,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         userCake = new Cake();
         rating = 0;
         profit = 0;
-
+        cakeShop.addCustomer();
         //toggle this during demo
         printCurrCakeInfo();
     }
