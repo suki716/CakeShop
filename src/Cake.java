@@ -150,6 +150,6 @@ public class Cake { //comparing correctness
             profit -= 5;
         }
         System.out.println();
-        return profit;
+        return profit * 10;
     }
 }
