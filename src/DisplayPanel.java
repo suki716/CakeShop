@@ -288,7 +288,9 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         super.paintComponent(g);
         clear();
         changeImg();
-        Font indieFlower = new Font("Indie Flower", Font.PLAIN, 24);
+        Font indieFlower = new Font("Indie Flower", Font.BOLD, 20);
+        g.setFont(indieFlower);
+        g.setColor(new Color(239,89,144));
         //constant buttons
         setInvisible(exit, 10, 10);
         if (!currScreen.equals("order") && !currScreen.equals("start") && !currScreen.equals("batter")) {
@@ -307,8 +309,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             //background
             g.drawImage(bgCounter, 0, 0, null);
             g.drawImage(stats, 0,0,null);
-            g.setFont(new Font("Helvetica", Font.PLAIN, 18));
-            g.setColor(new Color(239,89,144));
             g.drawString("" + cakeShop.getCustomerNum(), 270, 22);
             g.drawString("" + cakeShop.getTotalMoney(), 720, 22);
             g.drawString("" + cakeShop.getTotalStars(), 860, 22);
@@ -323,7 +323,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 g.setFont(indieFlower);
                 g.setColor(new Color(239,89,144));
 
-                g.setFont(new Font("Helvetica", Font.BOLD, 20));
 
                 if (nextChosen){
                     g.drawImage(textBubble2, 0, 0, null);
@@ -338,12 +337,10 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                     g.drawString(order2, 275, 100);
                     g.drawString(order3, 275, 125);
                     g.drawString(order4, 275, 150);
+                    setInvisible(cancel, 546,90);
                     cancel.setVisible(true);
-                    cancel.setLocation(546, 90);
                 }
-                next.setVisible(true);
-                next.setLocation(546, 55);
-
+                setInvisible(next,546,55);
             }
             g.drawImage(counter, 0, 0, null);
         } else if (currScreen.equals("batter")) {
