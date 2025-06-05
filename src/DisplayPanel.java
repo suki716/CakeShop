@@ -420,11 +420,11 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             g.drawString("Topping Amount: " + currCake.getCorrectTopAmt(),55, 470);
 
             g.drawString("Batter: " + userCake.getBatter(), 690,270);
-            g.drawString("Layers: " + userCake.getCorrectLayer(), 690, 310);
-            g.drawString("Frosting: " + userCake.getCorrectFrost(), 690, 350);
-            g.drawString("Frosting Amount: " + userCake.getCorrectFrostAmt(),690, 390);
-            g.drawString("Topping: " + userCake.getCorrectTop(),690, 430);
-            g.drawString("Topping Amount: " + userCake.getCorrectTopAmt(),690, 470);
+            g.drawString("Layers: " + userCake.getLayer(), 690, 310);
+            g.drawString("Frosting: " + userCake.getFrosting(), 690, 350);
+            g.drawString("Frosting Amount: " + userCake.getFrostingAmt(),690, 390);
+            g.drawString("Topping: " + userCake.getTopping(),690, 430);
+            g.drawString("Topping Amount: " + userCake.getToppingAmt(),690, 470);
 
             g.setColor(Color.black);
             g.drawString("$"+ profit,486,515);
