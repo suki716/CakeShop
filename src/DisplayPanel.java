@@ -323,7 +323,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 g.setFont(indieFlower);
                 g.setColor(new Color(239,89,144));
 
-
                 if (nextChosen){
                     g.drawImage(textBubble2, 0, 0, null);
                     g.drawString(nextStr, 275, 112);
@@ -338,7 +337,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                     g.drawString(order3, 275, 125);
                     g.drawString(order4, 275, 150);
                     setInvisible(cancel, 546,90);
-                    cancel.setVisible(true);
                 }
                 setInvisible(next,546,55);
             }

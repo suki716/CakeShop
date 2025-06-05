@@ -149,7 +149,6 @@ public class Cake { //comparing correctness
         if (rating <= 3) {
             profit -= 5;
         }
-        System.out.println();
-        return profit * 10;
+        return profit;
     }
 }
