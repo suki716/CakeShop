@@ -13,21 +13,16 @@ public class CircleButton extends JButton {
         size.height = rad;
         setPreferredSize(size);
         setContentAreaFilled(false);
+        setBorderPainted(false);
+        setOpaque(false);
+        setForeground(new Color(0, 0, 0, 0));
     }
 
     protected void paintComponent(Graphics g) {
-        if (getModel().isArmed()) {
-            g.setColor(Color.lightGray);
-        } else {
-            g.setColor(getBackground());
+        if (!isVisible()) {
+            return;
         }
-        g.fillOval(0, 0, getSize().width-1, getSize().height-1);
         super.paintComponent(g);
-    }
-
-    protected void paintBorder(Graphics g) {
-        g.setColor(getForeground());
-        g.drawOval(0, 0, getSize().width-1, getSize().height-1);
     }
 
     Shape shape;

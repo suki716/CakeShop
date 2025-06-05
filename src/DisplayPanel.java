@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 
 public class DisplayPanel extends JPanel implements ActionListener, MouseListener, MouseMotionListener {
     //dialogue options
@@ -258,7 +257,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         bgTopping = loadImage("Imgs/bgTopping.png");
 
         //animation
-        timer = new Timer(30, new ActionListener() {
+        timer = new Timer(10, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (currScreen.equals("order") && walk.getX() <= 400) {
                     repaint();
@@ -271,6 +270,16 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         defaultCursor = this.getCursor();
         addMouseMotionListener(this);
 
+        //load font
+        try {
+            Font indieFlower = Font.createFont(Font.TRUETYPE_FONT, new File("src/Resources/IndieFlower-Regular.ttf"));
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            ge.registerFont(indieFlower);
+            Font indieFlower24 = indieFlower.deriveFont(24f);
+        } catch (IOException | FontFormatException e) {
+            Font indieFlower24 = new Font("Serif", Font.PLAIN, 24);
+        }
+
         //music
         playMusic();
     }
@@ -279,6 +288,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         super.paintComponent(g);
         clear();
         changeImg();
+        Font indieFlower = new Font("Indie Flower", Font.PLAIN, 24);
         //constant buttons
         setInvisible(exit, 10, 10);
         if (!currScreen.equals("order") && !currScreen.equals("start") && !currScreen.equals("batter")) {
@@ -304,7 +314,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 walk.stop();
                 g.drawImage(ordering, 300, 100, null);
                 g.drawImage(textBubble, 0, 0, null);
-                g.setFont(new Font("Helvetica", Font.BOLD, 20));
+                g.setFont(indieFlower);
                 g.setColor(new Color(239,89,144));
 
                 if (nextChosen){
@@ -329,19 +339,14 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             nextChosen = false;
             g.drawImage(bgBatter, 0, 0, null);
             //choose flavor
-            vanilla.setVisible(true);
-            vanilla.setLocation(120, 172);
-            chocolate.setVisible(true);
-            chocolate.setLocation(390, 172);
-            strawberry.setVisible(true);
-            strawberry.setLocation(665, 172);
+            setInvisible(vanilla, 120, 172);
+            setInvisible(chocolate, 390, 172);
+            setInvisible(strawberry, 665, 172);
             if (CakeHelper.batters.size() >= 4) {
-                lemon.setVisible(true);
-                lemon.setLocation(255, 340);
+                setInvisible(lemon, 255, 340);
             }
             if (CakeHelper.batters.size() == 5) {
-                matcha.setVisible(true);
-                matcha.setLocation(525, 340);
+                setInvisible(matcha, 525, 340);
             }
         } else if (currScreen.equals("layer")) {
             //different backgrounds depending on batter option
@@ -350,14 +355,12 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             }
             g.drawImage(cakeChoice, 0, 0, null);
             //adding cake layers
-            frostingKnife.setVisible(true);
             Dimension size = getPreferredSize();
             size.width = 70;
             size.height = 280;
             frostingKnife.setPreferredSize(size);
-            frostingKnife.setLocation(830, 190);
-            cakeLayer.setVisible(true);
-            cakeLayer.setLocation(62, 250);
+            setInvisible(frostingKnife, 830, 190);
+            setInvisible(cakeLayer, 62, 250);
             if (frost && !nextLayer) {
                 cakeChoice = loadImage("/" + batter + "Batter/" + batter + "Frosted.png");
             }
@@ -372,37 +375,27 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             //adding frosting;
             g.drawImage(bgFrosting, 0, 0, null);
             g.drawImage(frostingAnimation.getActiveFrame(), 0, 0, null);
-            vanillaFrost.setVisible(true);
-            vanillaFrost.setLocation(200, 270);
-            chocolateFrost.setVisible(true);
-            chocolateFrost.setLocation(108, 270);
-            strawberryFrost.setVisible(true);
-            strawberryFrost.setLocation(682, 270);
+            setInvisible(vanillaFrost, 200, 270);
+            setInvisible(chocolateFrost, 108, 270);
+            setInvisible(strawberryFrost, 682, 270);
             if (CakeHelper.frosting.size() >= 4) {
-                peppermintFrost.setVisible(true);
-                peppermintFrost.setLocation(790, 270);
+                setInvisible(peppermintFrost, 790, 270);
             }
             if (CakeHelper.frosting.size() == 5) {
-                peachFrost.setVisible(true);
-                peachFrost.setLocation(18,270);
+                setInvisible(peachFrost, 18, 270);
             }
         } else if (currScreen.equals("topping")) {
             //add toppings
             g.drawImage(bgTopping, 0,0,null);
             g.drawImage(frostingAnimation.getActiveFrame(), 0, 0, null);
-            candles.setVisible(true);
-            candles.setLocation(170, 198);
-            strawberries.setVisible(true);
-            strawberries.setLocation(690, 200);
-            chocolateBar.setVisible(true);
-            chocolateBar.setLocation(170, 337);
+            setInvisible(candles, 170, 198);
+            setInvisible(strawberries, 690, 200);
+            setInvisible(chocolateBar, 170, 337);
             if (CakeHelper.toppings.size() >= 4) {
-                cinnamonStick.setVisible(true);
-                cinnamonStick.setLocation(690, 337);
+                setInvisible(cinnamonStick, 690, 337);
             }
             if (CakeHelper.toppings.size() >= 4) {
-                leaves.setVisible(true);
-                leaves.setLocation(42, 268);
+                setInvisible(leaves, 42, 268);
             }
         } else if (currScreen.equals("stats")) {
             //show stats
@@ -410,7 +403,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             g.drawImage(stats,0,0,null);
             g.drawImage(frostingAnimation.getActiveFrame(), 0, 0, null);
             g.setColor(new Color(239,89,144));
-            g.setFont(new Font("Helvetica", Font.PLAIN, 20));
+            g.setFont(indieFlower);
 
             g.drawString("Batter: " + currCake.getCorrectBat(), 55,270);
             g.drawString("Layers: " + currCake.getCorrectLayer(), 55, 310);
@@ -434,8 +427,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         } else if (currScreen.equals("spin")) {
             //spin screen
             g.drawImage(bgSpin, 0, 0, null);
-            spin.setVisible(true);
-            spin.setLocation(815, 95);
+            setInvisible(spin, 815, 95);
             if (spun) {
                 g.drawImage(spinningAnimation.getActiveFrame(), 0, 0, null);
                 if (spinningAnimation.getEnd()) {
@@ -480,6 +472,8 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             cancelChosen = true;
         } else if (currScreen.equals("order") && casted == next && nextChosen) {
             currScreen = "batter";
+            nextChosen = false;
+            cancelChosen = false;
         } else if (currScreen.equals("order") && casted == next){
             nextChosen = true;
         } else if (currScreen.equals("batter")) {
@@ -781,6 +775,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         button.setOpaque(false);
         button.setContentAreaFilled(false);
         button.setBorderPainted(false);
+        button.setForeground(new Color(0, 0, 0, 0));
         button.setVisible(true);
         button.setLocation(x, y);
     }
@@ -797,5 +792,4 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             System.out.println(e.getMessage());
         }
     }
-
 }
