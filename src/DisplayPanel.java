@@ -27,6 +27,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private boolean nextChosen;
     private boolean cancelChosen;
     private String currScreen;
+
     //play options
     private JButton start;
     private JButton nextFrame;
