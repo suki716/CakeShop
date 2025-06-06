@@ -30,12 +30,9 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     //play options
     private JButton start;
     private JButton nextFrame;
-    private JButton back; //in case we can do it//trashcan
     private JButton exit;
-    private JButton finish;
     private JButton spin;
-
-    //private JButton recipe;
+    private JButton doSpin;
 
     //batter flavors
     private JButton vanilla;
@@ -73,6 +70,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private BufferedImage bgFrosting;
     private BufferedImage bgTopping;
     private BufferedImage stats;
+    private BufferedImage doSpinbg;
 
     //cookie img
     private BufferedImage ordering;
@@ -114,6 +112,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
 
     //user decisions
     private String batter;
+    private String errorMsg = null;
 
     //spinning
     private BufferedImage bgSpin = loadImage("Spinning/Spinning-00.png");
@@ -171,6 +170,10 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         spin = new CircleButton("spin", 45);
         spin.addActionListener(this);
         add(spin);
+
+        doSpin = new JButton("spin!!!");
+        doSpin.addActionListener(this);
+        add(doSpin);
 
         //batter flavors
         vanilla = new CircleButton("vanilla", 170);
@@ -255,6 +258,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         bgFrosting = loadImage("Imgs/bgFrosting.png");
         bgTopping = loadImage("Imgs/bgTopping.png");
         stats = loadImage("Imgs/StatDisplay.png");
+        doSpinbg = loadImage("Imgs/spinButton.png");
 
         //animation
         timer = new Timer(10, new ActionListener() {
@@ -308,10 +312,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         } else if (currScreen.equals("order")) {
             //background
             g.drawImage(bgCounter, 0, 0, null);
-            g.drawImage(stats, 0,0,null);
-            g.drawString("" + cakeShop.getCustomerNum(), 270, 22);
-            g.drawString("" + cakeShop.getTotalMoney(), 720, 22);
-            g.drawString("" + cakeShop.getTotalStars(), 860, 22);
+            drawStats(g);
             //animation
             if (walk.getX() < 400) {
                 g.drawImage(walk.getActiveFrame(), walk.getX(), 200, walk.getActiveFrame().getWidth(), walk.getActiveFrame().getHeight(), null);
@@ -429,12 +430,13 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             g.setColor(Color.black);
             g.drawString("$"+ profit,486,515);
 
-            spin.setVisible(true);
-            spin.setLocation(10, 425);
+            setInvisible(doSpin, 810, 72);
+            g.drawImage(doSpinbg, 0, 0, null);
         } else if (currScreen.equals("spin")) {
             //spin screen
             g.drawImage(bgSpin, 0, 0, null);
             setInvisible(spin, 815, 95);
+            drawStats(g);
             if (spun) {
                 g.drawImage(spinningAnimation.getActiveFrame(), 0, 0, null);
                 if (spinningAnimation.getEnd()) {
@@ -442,6 +444,9 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                     bgSpin = loadImage("Spinning/" + cakeShop.spinWheel().getName() +".png");
                     spinningAnimation = new SpinningAnimation();
                 }
+            }
+            if (errorMsg != null) {
+                drawErrorMsg(g, indieFlower);
             }
         }
 
@@ -516,7 +521,9 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 frost = true;
             } else if (casted == cakeLayer && frost) {
                 nextLayer = true;
-                userCake.addLayer();
+                if (userCake.getLayer() < 2) {
+                    userCake.addLayer();
+                }
                 frostingAnimation = new FrostingAnimation(batter, "2");
                 cakeMask = loadImage("Imgs/cakeMask2.png");
             }
@@ -585,7 +592,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             currScreen = "order";
             walk.start(true);
             resetCake();
-        } else if (currScreen.equals("stats") && casted == spin) {
+        } else if (currScreen.equals("stats") && casted == doSpin) {
             currScreen = "spin";
             resetCake();
         } else if (currScreen.equals("spin")) {
@@ -593,12 +600,17 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 currScreen = "order";
                 walk.start(true);
             }
-            if (casted == spin && numSpins <= 5) {
+            if (casted == spin) {
+                if (!(numSpins <= 5)) {
+                    errorMsg = "You collected all the ingredients!";
+                }
                 if (cakeShop.getTotalMoney() >= 100) {
                     cakeShop.spin();
                     spinningAnimation.start();
                     spun = true;
                     numSpins++;
+                } else {
+                    errorMsg = "You don't have enough money!";
                 }
             }
         }
@@ -661,6 +673,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         nextFrame.setVisible(false);
         exit.setVisible(false);
         spin.setVisible(false);
+        doSpin.setVisible(false);
         //batter
         vanilla.setVisible(false);
         chocolate.setVisible(false);
@@ -720,6 +733,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         frost = false;
         nextLayer = false;
         cakeChoice = null;
+        bgSpin = loadImage("Spinning/Spinning-00.png");
         currCake = currDay.newCustomer();
         order1 = "Hello! I want a " + currCake.getCorrectLayer() + "-layered ";
         order2 = currCake.getCorrectBat() + " cake with " + currCake.getCorrectFrostAmt();
@@ -787,7 +801,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     }
 
     private void playMusic() {
-        File audioFile = new File("src/music.wav");
+        File audioFile = new File("src/Resources/music.wav");
         try {
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
             Clip clip = AudioSystem.getClip();
@@ -797,5 +811,26 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    private void drawStats(Graphics g) {
+        g.drawImage(stats, 0,0,null);
+        g.drawString("" + cakeShop.getCustomerNum(), 270, 22);
+        g.drawString("" + cakeShop.getTotalMoney(), 720, 22);
+        g.drawString("" + cakeShop.getTotalStars(), 860, 22);
+    }
+
+    private void drawErrorMsg(Graphics g, Font font) {
+        g.setFont(font);
+        g.setColor(Color.black);
+        g.drawString(errorMsg, 340, 435);
+        timer = new Timer(3000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                errorMsg = null;
+                repaint();
+                timer.stop();
+            }
+        });
     }
 }
