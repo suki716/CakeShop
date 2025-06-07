@@ -34,6 +34,8 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private JButton exit;
     private JButton spin;
     private JButton doSpin;
+    private Timer errorMsgTimer;
+    private Timer mysticTimer;
 
     //batter flavors
     private JButton vanilla;
@@ -60,10 +62,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
 
     //images
     private BufferedImage homeScreen;
-    private BufferedImage startingScreen;
-    private BufferedImage bgMaking;
     private BufferedImage bgCounter;
-    private BufferedImage endScreen;
     private BufferedImage counter;
     private BufferedImage textBubble;
     private BufferedImage textBubble2;
@@ -72,6 +71,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     private BufferedImage bgTopping;
     private BufferedImage stats;
     private BufferedImage doSpinbg;
+    private BufferedImage mysticFlour;
 
     //cookie img
     private BufferedImage ordering;
@@ -114,6 +114,8 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     //user decisions
     private String batter;
     private String errorMsg = null;
+    long time = 0;
+    boolean showed = false;
 
     //spinning
     private BufferedImage bgSpin = loadImage("Spinning/Spinning-00.png");
@@ -260,6 +262,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         bgTopping = loadImage("Imgs/bgTopping.png");
         stats = loadImage("Imgs/StatDisplay.png");
         doSpinbg = loadImage("Imgs/spinButton.png");
+        mysticFlour = loadImage("Imgs/mysticFlour.png");
 
         //animation
         timer = new Timer(10, new ActionListener() {
@@ -433,6 +436,20 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
 
             setInvisible(doSpin, 810, 72);
             g.drawImage(doSpinbg, 0, 0, null);
+
+            if (rating <= 3 && !showed) {
+                if (time == 0) {
+                    time = System.nanoTime();
+                }
+                long elapsed = System.nanoTime() - time;
+                if (elapsed < 75_000_000L) {
+                    g.drawImage(mysticFlour, 0, 0, null);
+                } else {
+                    time = 0;
+                    showed = true;
+                    errorMsg = "Try making a better cake next time!";
+                }
+            }
         } else if (currScreen.equals("spin")) {
             //spin screen
             g.drawImage(bgSpin, 0, 0, null);
@@ -445,9 +462,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                     bgSpin = loadImage("Spinning/" + cakeShop.spinWheel().getName() +".png");
                     spinningAnimation = new SpinningAnimation();
                 }
-            }
-            if (errorMsg != null) {
-                drawErrorMsg(g, indieFlower);
             }
         }
 
@@ -470,6 +484,11 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             int x = cursorPosition.x - cursorOffsetX;
             int y = cursorPosition.y - cursorOffsetY;
             g.drawImage(customCursorImage, x, y, customCursorImage.getWidth(), customCursorImage.getHeight(), null);
+        }
+
+        if (errorMsg != null) {
+            drawErrorMsg(g, indieFlower);
+            repaint();
         }
     }
 
@@ -602,14 +621,13 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 walk.start(true);
             }
             if (casted == spin) {
-                if (!(numSpins <= 5)) {
-                    errorMsg = "You collected all the ingredients!";
-                }
                 if (cakeShop.getTotalMoney() >= 100) {
                     cakeShop.spin();
                     spinningAnimation.start();
                     spun = true;
                     numSpins++;
+                } else if (!(numSpins <= 5)) {
+                    errorMsg = "You collected all the ingredients!";
                 } else {
                     errorMsg = "You don't have enough money!";
                 }
@@ -734,6 +752,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         frost = false;
         nextLayer = false;
         cakeChoice = null;
+        showed = false;
         bgSpin = loadImage("Spinning/Spinning-00.png");
         currCake = currDay.newCustomer();
         order1 = "Hello! I want a " + currCake.getCorrectLayer() + "-layered ";
@@ -822,16 +841,44 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
     }
 
     private void drawErrorMsg(Graphics g, Font font) {
+        Graphics2D g2d = (Graphics2D) g.create();
+        g2d.setColor(new Color(0, 0, 0, 100));
+        g2d.fillRect(0, 0, getWidth(), getHeight());
+        g2d.dispose();
+
+        Color bgColor = new Color(0, 0, 0, 50);
+        Color borderColor = new Color(245, 160, 191, 160);
+        int padding = 12;
+        int borderThickness = 5;
+
+        FontMetrics metrics = g.getFontMetrics(font);
+        int textWidth = metrics.stringWidth(errorMsg);
+        int textHeight = metrics.getHeight();
+
+        int boxWidth = textWidth + 2 * padding;
+        int boxHeight = textHeight + 2 * padding;
+        int x = (getWidth() - boxWidth) / 2;
+        int y = (getHeight() - boxHeight) / 2;
+
+        g.setColor(bgColor);
+        g.fillRoundRect(x, y, boxWidth, boxHeight, 15, 15);
+
+        g.setColor(borderColor);
+        g.fillRoundRect(x, y, boxWidth, borderThickness, 10, 10);
+        g.fillRoundRect(x, y + boxHeight - borderThickness, boxWidth, borderThickness, 10, 10);
+
         g.setFont(font);
-        g.setColor(Color.black);
-        g.drawString(errorMsg, 340, 435);
-        timer = new Timer(3000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        g.setColor(Color.WHITE);
+        g.drawString(errorMsg, x + padding, y + padding + metrics.getAscent());
+
+        if (errorMsgTimer == null) {
+            errorMsgTimer = new Timer(2000, e -> {
                 errorMsg = null;
                 repaint();
-                timer.stop();
-            }
-        });
+            });
+        }
+        if (!errorMsgTimer.isRunning()) {
+            errorMsgTimer.restart();
+        }
     }
 }
