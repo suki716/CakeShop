@@ -442,8 +442,9 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                     time = System.nanoTime();
                 }
                 long elapsed = System.nanoTime() - time;
-                if (elapsed < 75_000_000L) {
+                if (elapsed < 100_000_000L) {
                     g.drawImage(mysticFlour, 0, 0, null);
+                    playScream();
                 } else {
                     time = 0;
                     showed = true;
@@ -614,20 +615,20 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             resetCake();
         } else if (currScreen.equals("stats") && casted == doSpin) {
             currScreen = "spin";
-            resetCake();
         } else if (currScreen.equals("spin")) {
             if (casted == nextFrame) {
+                resetCake();
                 currScreen = "order";
                 walk.start(true);
             }
             if (casted == spin) {
-                if (cakeShop.getTotalMoney() >= 100) {
+                if (!(numSpins <= 5)) {
+                    errorMsg = "You collected all the ingredients!";
+                } else if (cakeShop.getTotalMoney() >= 100) {
                     cakeShop.spin();
                     spinningAnimation.start();
                     spun = true;
                     numSpins++;
-                } else if (!(numSpins <= 5)) {
-                    errorMsg = "You collected all the ingredients!";
                 } else {
                     errorMsg = "You don't have enough money!";
                 }
@@ -820,19 +821,6 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         button.setLocation(x, y);
     }
 
-    private void playMusic() {
-        File audioFile = new File("src/Resources/music.wav");
-        try {
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioStream);
-            clip.start();
-            clip.loop(Clip.LOOP_CONTINUOUSLY); // repeats song
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
     private void drawStats(Graphics g) {
         g.drawImage(stats, 0,0,null);
         g.drawString("" + cakeShop.getCustomerNum(), 270, 22);
@@ -879,6 +867,31 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         }
         if (!errorMsgTimer.isRunning()) {
             errorMsgTimer.restart();
+        }
+    }
+
+    private void playMusic() {
+        File audioFile = new File("src/Resources/music.wav");
+        try {
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
+            clip.start();
+            clip.loop(Clip.LOOP_CONTINUOUSLY); // repeats song
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void playScream() {
+        File audioFile = new File("src/Resources/scream.wav");
+        try {
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
+            clip.start();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }

@@ -34,7 +34,6 @@ public class SpinningAnimation implements ActionListener {
         }
         this.frames = images;
         currentFrame = 0;
-        //used to be 200 - changed fro tetsing
         timer = new Timer(5, this);
         ended = false;
     }
