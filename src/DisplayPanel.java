@@ -296,6 +296,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
         super.paintComponent(g);
         clear();
         changeImg();
+        boolean mystic = false;
         Font indieFlower = new Font("Indie Flower", Font.BOLD, 20);
         g.setFont(indieFlower);
         g.setColor(new Color(239,89,144));
@@ -445,6 +446,7 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
                 if (elapsed < 100_000_000L) {
                     g.drawImage(mysticFlour, 0, 0, null);
                     playScream();
+                    mystic = true;
                 } else {
                     time = 0;
                     showed = true;
@@ -466,17 +468,19 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             }
         }
 
-        //drawing dallops
-        if (!dallops.isEmpty()) {
-            for (Dallop dallop : dallops) {
-                g.drawImage(dallop.getImage(), dallop.getxCoord(), dallop.getyCoord(), null);
+        if (!mystic) {
+            //drawing dallops
+            if (!dallops.isEmpty()) {
+                for (Dallop dallop : dallops) {
+                    g.drawImage(dallop.getImage(), dallop.getxCoord(), dallop.getyCoord(), null);
+                }
             }
-        }
 
-        //drawing toppings
-        if(!toppings.isEmpty()){
-            for(Topping topping : toppings){
-                g.drawImage(topping.getImage(), topping.getxCoord(), topping.getyCoord(), null);
+            //drawing toppings
+            if(!toppings.isEmpty()){
+                for(Topping topping : toppings){
+                    g.drawImage(topping.getImage(), topping.getxCoord(), topping.getyCoord(), null);
+                }
             }
         }
 
@@ -615,9 +619,9 @@ public class DisplayPanel extends JPanel implements ActionListener, MouseListene
             resetCake();
         } else if (currScreen.equals("stats") && casted == doSpin) {
             currScreen = "spin";
+            resetCake();
         } else if (currScreen.equals("spin")) {
             if (casted == nextFrame) {
-                resetCake();
                 currScreen = "order";
                 walk.start(true);
             }
